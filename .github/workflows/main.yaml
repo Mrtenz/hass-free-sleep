@@ -64,3 +64,13 @@ jobs:
       - name: Check formatting
         run: poetry poe format --check
 
+  check-hacs:
+    name: Check HACS compatibility
+    runs-on: ubuntu-latest
+    needs:
+      - prepare
+    steps:
+      - name: Check HACS compatibility
+        uses: hacs/action@22.5.0
+        with:
+          category: integration

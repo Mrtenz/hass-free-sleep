@@ -1,0 +1,64 @@
+[project]
+name = "hass-free-sleep"
+description = "Home Assistant integration for Free Sleep"
+license = "MIT"
+authors = [
+  { name = "Maarten Zuidhoorn", email = "maarten@zuidhoorn.com" }
+]
+readme = "README.md"
+requires-python = ">=3.14,<4.0"
+dependencies = [
+  "aiohttp (>=3.13.2,<4.0.0)",
+  "async-timeout (>=5.0.1,<6.0.0)",
+  "homeassistant (>=2025.11.2,<2026.0.0)",
+  "voluptuous (>=0.15.2,<0.16.0)",
+  "asyncio (>=4.0.0,<5.0.0)",
+]
+
+[dependency-groups]
+dev = [
+  "ruff (>=0.14.5,<0.15.0)"
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false
+
+[tool.poetry.requires-plugins]
+poethepoet = { version = "~0.35.0", extras = ["poetry_plugin"]}
+
+[tool.poe.tasks]
+check = "ruff format --check"
+format = "ruff format"
+lint = "ruff check"
+
+[tool.ruff]
+line-length = 80
+indent-width = 2
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+  "COM812",
+  "D203",
+  "D205",
+  "D211",
+  "D212",
+  "EM101",
+  "FBT001",
+  "PLR2004",
+  "TC001",
+  "TC002",
+  "TC003",
+  "Q000",
+  "Q003",
+]
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+docstring-code-format = true
+

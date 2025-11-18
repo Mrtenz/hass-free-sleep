@@ -1,0 +1,76 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configure Free Sleep",
+        "description": "Enter the URL of your Free Sleep device, including the protocol and port (e.g., http://10.0.0.5:3000).",
+        "data": {
+          "host": "Host URL",
+          "update_interval": "Update interval (seconds, optional)"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure Free Sleep",
+        "description": "Enter the URL of your Free Sleep device, including the protocol and port (e.g., http://10.0.0.5:3000).",
+        "data": {
+          "host": "Host URL",
+          "update_interval": "Update interval (seconds, optional)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect to the Free Sleep device. Please check the URL and ensure the device is reachable.",
+      "invalid_url": "The host URL must start with `http://` or `https://`."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "priming": {
+        "name": "Priming"
+      },
+      "water_level": {
+        "name": "Water Level"
+      }
+    },
+    "button": {
+      "prime": {
+        "name": "Prime"
+      }
+    },
+    "climate": {
+      "temperature": {
+        "name": "Temperature"
+      }
+    },
+    "number": {
+      "led_brightness": {
+        "name": "LED Brightness"
+      }
+    },
+    "sensor": {
+      "heart_rate": {
+        "name": "Heart Rate"
+      },
+      "hrv": {
+        "name": "HRV"
+      },
+      "respiratory_rate": {
+        "name": "Respiratory Rate"
+      },
+      "version": {
+        "name": "Version"
+      },
+      "wifi_strength": {
+        "name": "WiFi Strength"
+      }
+    },
+    "switch": {
+      "away_mode": {
+        "name": "Away Mode"
+      },
+      "prime_daily": {
+        "name": "Prime Daily"
+      }
+    }
+  }
+}

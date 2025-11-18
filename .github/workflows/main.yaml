@@ -11,20 +11,18 @@ jobs:
   prepare:
     name: Prepare
     runs-on: ubuntu-latest
-    outputs:
-      poetry-cache-hit: ${{ steps.cache-poetry.outputs.cache-hit }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+      - name: Install poetry
+        run: pipx install poetry
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: 3.14
           cache: poetry
-      - name: Install Poetry
-        run: |
-          python -m pip install --upgrade pip
-          pip install pylint poetry
+      - name: Install dependencies
+        run: poetry install
 
   lint:
     name: Lint
@@ -34,15 +32,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+      - name: Install poetry
+        run: pipx install poetry
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: 3.14
           cache: poetry
-      - name: Install Poetry
-        run: |
-          python -m pip install --upgrade pip
-          pip install pylint poetry
       - name: Install dependencies
         run: poetry install
       - name: Lint
@@ -56,15 +52,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+      - name: Install poetry
+        run: pipx install poetry
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: 3.14
           cache: poetry
-      - name: Install Poetry
-        run: |
-          python -m pip install --upgrade pip
-          pip install pylint poetry
       - name: Install dependencies
         run: poetry install
       - name: Check formatting

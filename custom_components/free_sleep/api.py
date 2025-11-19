@@ -161,10 +161,10 @@ class FreeSleepAPI:
 
     :param enabled: Whether to enable (True) or disable (False) daily priming.
     """
-    url = f'{self.host}{DEVICE_STATUS_ENDPOINT}'
+    url = f'{self.host}{SETTINGS_ENDPOINT}'
     log.debug(f'Setting daily priming to {enabled} on device at "{url}".')
 
-    json_data = {'settings': {'primePodDaily': {'enabled': enabled}}}
+    json_data = {'primePodDaily': {'enabled': enabled}}
 
     await self.post(url, json_data)
 

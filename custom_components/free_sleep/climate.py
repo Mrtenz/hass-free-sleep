@@ -12,6 +12,7 @@ from typing import Any, Final
 from homeassistant.components.climate import (
   ClimateEntity,
   ClimateEntityDescription,
+  ClimateEntityFeature,
   HVACMode,
 )
 from homeassistant.config_entries import ConfigEntry
@@ -47,7 +48,7 @@ POD_SIDE_CLIMATES: tuple[FreeSleepClimateDescription, ...] = (
     translation_key='temperature',
     icon='mdi:water-thermometer',
     get_current_temperature=lambda data: data['status']['currentTemperatureF'],
-    get_target_temperature=lambda side: side['status']['targetTemperatureF'],
+    get_target_temperature=lambda data: data['status']['targetTemperatureF'],
   ),
 )
 
@@ -89,6 +90,11 @@ class FreeSleepSideClimate(
   _attr_min_temp: Final = EIGHT_SLEEP_MIN_TEMPERATURE_F
   _attr_max_temp: Final = EIGHT_SLEEP_MAX_TEMPERATURE_F
   _attr_target_temperature_step: Final = EIGHT_SLEEP_TEMPERATURE_STEP_F
+  _attr_supported_features: Final = (
+    ClimateEntityFeature.TARGET_TEMPERATURE
+    | ClimateEntityFeature.TURN_ON
+    | ClimateEntityFeature.TURN_OFF
+  )
 
   def __init__(
     self,
@@ -160,7 +166,9 @@ class FreeSleepSideClimate(
     """
     temperature = kwargs.get('temperature')
     if temperature is not None:
-      await self.side.set_target_temperature(float(temperature))
+      await self.side.set_target_temperature(temperature)
+
+    await self.coordinator.async_request_refresh()
 
   async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
     """
@@ -172,3 +180,15 @@ class FreeSleepSideClimate(
       await self.side.set_active(False)
     else:
       await self.side.set_active(True)
+
+    await self.coordinator.async_request_refresh()
+
+  async def async_turn_on(self) -> None:
+    """Turn the climate entity on."""
+    await self.side.set_active(True)
+    await self.coordinator.async_request_refresh()
+
+  async def async_turn_off(self) -> None:
+    """Turn the climate entity off."""
+    await self.side.set_active(False)
+    await self.coordinator.async_request_refresh()

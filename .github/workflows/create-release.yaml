@@ -1,0 +1,74 @@
+name: Create release
+
+on:
+  workflow_dispatch:
+    inputs:
+      base-branch:
+        description: 'Base branch to create the release from.'
+        required: true
+        default: 'main'
+
+      release-type:
+        description: 'Type of release to create (major, minor, or patch).'
+        required: true
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+
+jobs:
+  create-pull-request:
+    name: Create pull request
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.inputs.base-branch }}
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.14
+          cache: poetry
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Bump version
+        id: bump-version
+        env:
+          RELEASE_TYPE: ${{ github.event.inputs.release-type }}
+        run: |
+          echo "version=$(poetry version "$RELEASE_TYPE" --short)" >> "$GITHUB_OUTPUT"
+
+      - name: Create release branch
+        env:
+          VERSION: ${{ steps.bump-version.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "release/v$VERSION"
+          
+          MANIFEST_FILE="./custom_components/free_sleep/manifest.json"
+          jq --arg version "$VERSION" '.version = $version' "$MANIFEST_FILE" | sponge "$MANIFEST_FILE"
+          git add "$MANIFEST_FILE"
+          
+          git commit -m "chore: Bump version to v$VERSION"
+          git push origin "release/v$VERSION"
+
+      - name: Create pull request
+        env:
+          BASE_BRANCH: ${{ github.event.inputs.base-branch }}
+          VERSION: ${{ steps.bump-version.outputs.version }}
+        run: |
+          gh pr create \
+            --title "chore: Release \`v$VERSION\`" \
+            --body "This pull request prepares the release of version \`v$VERSION\`." \
+            --head "release/v$VERSION" \
+            --base "$BASE_BRANCH"
+

@@ -77,6 +77,18 @@ class Pod:
     data['settings']['primePodDaily']['enabled'] = enabled
     self.coordinator.async_set_updated_data(data)
 
+  async def set_reboot_daily(self, enabled: bool) -> None:
+    """
+    Enable or disable daily rebooting for the Free Sleep Pod device.
+
+    :param enabled: True to enable daily rebooting, False to disable.
+    """
+    await self.api.set_reboot_daily(enabled)
+
+    data = self.coordinator.data
+    data['settings']['rebootDaily'] = enabled
+    self.coordinator.async_set_updated_data(data)
+
   async def set_led_brightness(self, brightness: int) -> None:
     """
     Set the LED brightness for the Free Sleep Pod device.

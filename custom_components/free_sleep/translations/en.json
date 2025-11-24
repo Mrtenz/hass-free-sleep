@@ -70,6 +70,9 @@
       },
       "prime_daily": {
         "name": "Prime Daily"
+      },
+      "reboot_daily": {
+        "name": "Reboot Daily"
       }
     }
   }

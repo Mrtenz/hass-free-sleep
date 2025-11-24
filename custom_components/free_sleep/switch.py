@@ -84,9 +84,19 @@ POD_SWITCHES: tuple[FreeSleepSwitchDescription, ...] = (
     get_value=lambda data: data['settings']['primePodDaily']['enabled'],
     set_value=lambda pod, value: pod.set_prime_daily(value),
   ),
+  FreeSleepSwitchDescription(
+    name='Reboot Daily',
+    key='reboot_daily',
+    translation_key='reboot_daily',
+    device_class=SwitchDeviceClass.SWITCH,
+    on_icon='mdi:restart',
+    off_icon='mdi:restart-off',
+    get_value=lambda data: data['settings']['rebootDaily'],
+    set_value=lambda pod, value: pod.set_reboot_daily(value),
+  ),
 )
 
-POD_SIDES_SWITCHES: tuple[FreeSleepSideSwitchDescription, ...] = (
+POD_SIDE_SWITCHES: tuple[FreeSleepSideSwitchDescription, ...] = (
   FreeSleepSideSwitchDescription(
     name='Away Mode',
     key='away_mode',
@@ -124,7 +134,7 @@ async def async_setup_entry(
   for side in pod.sides:
     side_switches = [
       FreeSleepSideSwitch(coordinator, pod, side, description)
-      for description in POD_SIDES_SWITCHES
+      for description in POD_SIDE_SWITCHES
     ]
 
     async_add_entities(side_switches, update_before_add=True)

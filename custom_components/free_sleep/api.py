@@ -67,7 +67,7 @@ class FreeSleepAPI:
     """
     log.debug(f'GET {url}')
 
-    async with self.session.get(url, params=params) as response:
+    async with self.session.get(url, params=params, timeout=10) as response:
       response.raise_for_status()
       return await self.parse_response(response)
 
@@ -82,7 +82,7 @@ class FreeSleepAPI:
     """
     log.debug(f'POST {url} with data {json_data}')
 
-    async with self.session.post(url, json=json_data) as response:
+    async with self.session.post(url, json=json_data, timeout=10) as response:
       response.raise_for_status()
       return await self.parse_response(response)
 

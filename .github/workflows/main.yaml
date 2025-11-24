@@ -89,3 +89,74 @@ jobs:
         uses: hacs/action@22.5.0
         with:
           category: integration
+
+  all-jobs-complete:
+    name: All jobs complete
+    runs-on: ubuntu-latest
+    needs:
+      - lint
+      - format
+      - check-hacs
+    outputs:
+      passed: ${{ steps.set-output.outputs.passed }}
+    steps:
+      - name: Set output
+        id: set-output
+        run: |
+          echo "passed=true" >> "$GITHUB_OUTPUT"
+
+  all-jobs-pass:
+    name: All jobs pass
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+    needs:
+      - all-jobs-complete
+    steps:
+      - name: Check if all jobs passed
+        env:
+          PASSED: ${{ needs.all-jobs-complete.outputs.passed }}
+        run: |
+          if [ "$PASSED" != "true" ]; then
+            exit 1
+          fi
+          echo "All jobs passed."
+
+  is-release:
+    name: Check if release
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && startsWith(github.event.head_commit.author.name, 'github-actions') }}
+    needs:
+      - all-jobs-pass
+    outputs:
+      is-release: ${{ steps.check-release.outputs.is-release }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+
+      - name: Check if release
+        id: check-release
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          git fetch origin "$BEFORE"
+          
+          MANIFEST_FILE="./custom_components/free_sleep/manifest.json"
+          VERSION_BEFORE="$(git show "$BEFORE":"$MANIFEST_FILE" | jq --raw-output .version)"
+          VERSION_AFTER="$(jq --raw-output .version "$MANIFEST_FILE")"
+
+          if [ "$VERSION_BEFORE" != "$VERSION_AFTER" ]; then
+            echo "is-release=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is-release=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  publish-release:
+    name: Publish release
+    if: ${{ needs.is-release.outputs.is-release == 'true' }}
+    needs:
+      - is-release
+    uses: ./.github/workflows/publish-release.yaml
+    permissions:
+      contents: write

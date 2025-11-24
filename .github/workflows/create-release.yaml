@@ -21,6 +21,9 @@ jobs:
   create-pull-request:
     name: Create pull request
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -45,6 +48,7 @@ jobs:
           RELEASE_TYPE: ${{ github.event.inputs.release-type }}
         run: |
           echo "version=$(poetry version "$RELEASE_TYPE" --short)" >> "$GITHUB_OUTPUT"
+          git add pyproject.toml
 
       - name: Create release branch
         env:
@@ -55,7 +59,7 @@ jobs:
           git checkout -b "release/v$VERSION"
           
           MANIFEST_FILE="./custom_components/free_sleep/manifest.json"
-          jq --arg version "$VERSION" '.version = $version' "$MANIFEST_FILE" | sponge "$MANIFEST_FILE"
+          jq --arg version "$VERSION" '.version = $version' "$MANIFEST_FILE" > tmp.json && mv tmp.json "$MANIFEST_FILE"
           git add "$MANIFEST_FILE"
           
           git commit -m "chore: Bump version to v$VERSION"
@@ -65,10 +69,10 @@ jobs:
         env:
           BASE_BRANCH: ${{ github.event.inputs.base-branch }}
           VERSION: ${{ steps.bump-version.outputs.version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr create \
-            --title "chore: Release \`v$VERSION\`" \
-            --body "This pull request prepares the release of version \`v$VERSION\`." \
+            --title "chore: Release $VERSION" \
+            --body "This pull request prepares the release of version $VERSION." \
             --head "release/v$VERSION" \
             --base "$BASE_BRANCH"
-

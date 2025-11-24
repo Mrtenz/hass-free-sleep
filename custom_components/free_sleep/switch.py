@@ -134,7 +134,7 @@ async def async_setup_entry(
   for side in pod.sides:
     side_switches = [
       FreeSleepSideSwitch(coordinator, pod, side, description)
-      for description in POD_SIDES_SWITCHES
+      for description in POD_SIDE_SWITCHES
     ]
 
     async_add_entities(side_switches, update_before_add=True)

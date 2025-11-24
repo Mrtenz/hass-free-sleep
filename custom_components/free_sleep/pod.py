@@ -1,22 +1,15 @@
 """Classes to represent a Free Sleep Pod device and its sides."""
 
-from asyncio import gather
-from typing import Any, TypedDict
+from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .api import FreeSleepAPI
 from .constants import PodSide
-
-
-class PodState(TypedDict):
-  """A class that represents the state of a Free Sleep Pod device."""
-
-  status: dict[str, Any]
-  settings: dict[str, Any]
-  vitals: dict[PodSide, Any]
+from .coordinator import PodState
 
 
 class Pod:
@@ -27,25 +20,35 @@ class Pod:
   host: str
 
   def __init__(
-    self, hass: HomeAssistant, entry: ConfigEntry, name: str, host: str
+    self,
+    hass: HomeAssistant,
+    coordinator: DataUpdateCoordinator[PodState],
+    entry: ConfigEntry,
+    name: str,
+    host: str,
   ) -> None:
     """
     Initialize the Free Sleep Pod device.
 
     :param hass: The Home Assistant instance.
+    :param coordinator: The data update coordinator for the pod.
     :param entry: The configuration entry.
     :param name: The name of the Free Sleep Pod device. This should be fetched
     from the device during setup.
     :param host: The host address of the Free Sleep Pod device.
     """
     self.hass = hass
+    self.coordinator = coordinator
     self.api = FreeSleepAPI(host, async_get_clientsession(hass))
 
     self.id = entry.entry_id
     self.model: str = name
     self.host = host
     self.name = name
-    self.sides = [Side(hass, self, 'left'), Side(hass, self, 'right')]
+    self.sides = [
+      Side(hass, coordinator, self, 'left'),
+      Side(hass, coordinator, self, 'right'),
+    ]
 
   @property
   def device_info(self) -> dict:
@@ -62,29 +65,6 @@ class Pod:
       'model': self.model,
     }
 
-  async def async_fetch_state(self) -> PodState:
-    """
-    Fetch the current state from the Free Sleep Pod device.
-
-    :return: A dictionary containing the device status and settings.
-    """
-    requests = [
-      self.api.fetch_device_status(),
-      self.api.fetch_settings(),
-      self.api.fetch_vitals('left'),
-      self.api.fetch_vitals('right'),
-    ]
-
-    status, settings, vitals_left, vitals_right = await gather(*requests)
-    return {
-      'status': status,
-      'settings': settings,
-      'vitals': {
-        'left': vitals_left,
-        'right': vitals_right,
-      },
-    }
-
   async def set_prime_daily(self, enabled: bool) -> None:
     """
     Enable or disable daily priming for the Free Sleep Pod device.
@@ -92,6 +72,10 @@ class Pod:
     :param enabled: True to enable daily priming, False to disable.
     """
     await self.api.set_prime_daily(enabled)
+
+    data = self.coordinator.data
+    data['settings']['primePodDaily']['enabled'] = enabled
+    self.coordinator.async_set_updated_data(data)
 
   async def set_led_brightness(self, brightness: int) -> None:
     """
@@ -101,19 +85,31 @@ class Pod:
     """
     await self.api.set_led_brightness(brightness)
 
+    data = self.coordinator.data
+    data['settings']['ledBrightness'] = brightness
+    self.coordinator.async_set_updated_data(data)
+
 
 class Side:
   """A class that represents a side of a Free Sleep Pod device."""
 
-  def __init__(self, hass: HomeAssistant, pod: Pod, side: PodSide) -> None:
+  def __init__(
+    self,
+    hass: HomeAssistant,
+    coordinator: DataUpdateCoordinator[PodState],
+    pod: Pod,
+    side: PodSide,
+  ) -> None:
     """
     Initialize the Free Sleep Pod side.
 
     :param hass: The Home Assistant instance.
+    :param coordinator: The data update coordinator for the pod.
     :param pod: The Free Sleep Pod instance.
     :param side: The side of the pod ('left' or 'right').
     """
     self.hass = hass
+    self.coordinator = coordinator
     self.pod = pod
     self.type = side
     self.id = f'{pod.id}_{side}'
@@ -153,7 +149,11 @@ class Side:
 
     :param active: The desired active state (True for on, False for off).
     """
-    return await self.pod.api.set_side_active(self.type, active)
+    await self.pod.api.set_side_active(self.type, active)
+
+    data = self.coordinator.data
+    data['status'][self.type]['isOn'] = active
+    self.coordinator.async_set_updated_data(data)
 
   async def set_target_temperature(self, temperature_f: float) -> None:
     """
@@ -161,6 +161,8 @@ class Side:
 
     :param temperature_f: The desired target temperature in Fahrenheit.
     """
-    return await self.pod.api.set_side_target_temperature(
-      self.type, temperature_f
-    )
+    await self.pod.api.set_side_target_temperature(self.type, temperature_f)
+
+    data = self.coordinator.data
+    data['settings'][self.type]['targetTemperatureF'] = temperature_f
+    self.coordinator.async_set_updated_data(data)

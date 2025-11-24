@@ -1,15 +1,13 @@
 """Home Assistant integration for Free Sleep Pod devices."""
 
-from datetime import timedelta
-
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .api import FreeSleepAPI
 from .constants import DOMAIN
+from .coordinator import FreeSleepCoordinator
 from .logger import log
 from .pod import Pod
 
@@ -35,17 +33,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
   """
   api = FreeSleepAPI(entry.data['host'], async_get_clientsession(hass))
   status = await api.fetch_device_status()
+  name = status['hubVersion']
 
-  pod = Pod(hass, entry, status['hubVersion'], entry.data['host'])
-  coordinator = DataUpdateCoordinator(
+  coordinator = FreeSleepCoordinator(
     hass,
     log,
-    name=pod.name,
-    update_method=pod.async_fetch_state,
-    update_interval=timedelta(seconds=30),
+    api,
+    name,
   )
 
-  await coordinator.async_config_entry_first_refresh()
+  pod = Pod(hass, coordinator, entry, status['hubVersion'], entry.data['host'])
 
   hass.data.setdefault(DOMAIN, {})
   hass.data[DOMAIN][entry.entry_id] = (
@@ -53,7 +50,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     coordinator,
   )
 
+  await coordinator.async_config_entry_first_refresh()
   await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
   return True
 
 

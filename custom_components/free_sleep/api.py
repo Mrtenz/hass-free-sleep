@@ -168,6 +168,19 @@ class FreeSleepAPI:
 
     await self.post(url, json_data)
 
+  async def set_reboot_daily(self, enabled: bool) -> None:
+    """
+    Enable or disable daily rebooting for the Free Sleep Pod device.
+
+    :param enabled: Whether to enable (True) or disable (False) daily rebooting.
+    """
+    url = f'{self.host}{SETTINGS_ENDPOINT}'
+    log.debug(f'Setting daily rebooting to {enabled} on device at "{url}".')
+
+    json_data = {'rebootDaily': enabled}
+
+    await self.post(url, json_data)
+
   async def set_led_brightness(self, brightness: int) -> None:
     """
     Set the LED brightness on the Free Sleep device.

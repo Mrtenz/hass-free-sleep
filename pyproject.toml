@@ -1,6 +1,6 @@
 [project]
 name = "hass-free-sleep"
-version = "0.0.0"
+version = "0.1.0"
 description = "Home Assistant integration for Free Sleep"
 license = "MIT"
 authors = [

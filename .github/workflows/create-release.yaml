@@ -25,10 +25,18 @@ jobs:
       contents: write
       pull-requests: write
     steps:
+      - name: Get GitHub token
+        uses: actions/create-github-app-token@v2
+        id: github-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
           ref: ${{ github.event.inputs.base-branch }}
+          token: ${{ steps.github-token.outputs.token }}
 
       - name: Install poetry
         run: pipx install poetry
@@ -69,10 +77,10 @@ jobs:
         env:
           BASE_BRANCH: ${{ github.event.inputs.base-branch }}
           VERSION: ${{ steps.bump-version.outputs.version }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.github-token.outputs.token }}
         run: |
           gh pr create \
             --title "chore: Release $VERSION" \
-            --body "This pull request prepares the release of version $VERSION." \
+            --body "This is the release candidate for version $VERSION." \
             --head "release/v$VERSION" \
             --base "$BASE_BRANCH"

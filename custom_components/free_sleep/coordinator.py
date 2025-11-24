@@ -2,6 +2,7 @@
 A module that defines the data update coordinator for Free Sleep Pod devices,
 which is responsible for fetching and updating the device state periodically.
 """
+
 from asyncio import gather
 from datetime import timedelta
 from logging import Logger
@@ -9,8 +10,10 @@ from typing import Any, TypedDict
 
 from aiohttp import ClientError
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, \
-  UpdateFailed
+from homeassistant.helpers.update_coordinator import (
+  DataUpdateCoordinator,
+  UpdateFailed,
+)
 
 from .api import FreeSleepAPI
 from .constants import PodSide
@@ -64,13 +67,21 @@ class FreeSleepCoordinator(DataUpdateCoordinator[PodState]):
     try:
       status, settings, vitals_left, vitals_right = await gather(*requests)
     except TimeoutError as error:
-      log.error(f'Timeout while fetching data from device at "{self.api.host}".')
+      log.error(
+        f'Timeout while fetching data from device at "{self.api.host}".'
+      )
       raise UpdateFailed from error
     except ClientError as error:
-      log.error(f'Client error while fetching data from device at "{self.api.host}": {error}')
+      log.error(
+        f'Client error while fetching data from device at "{self.api.host}":'
+        f'{error}'
+      )
       raise UpdateFailed from error
     except Exception as error:
-      log.error(f'Unexpected error while fetching data from device at "{self.api.host}": {error}')
+      log.error(
+        'Unexpected error while fetching data from device at'
+        f'"{self.api.host}": {error}'
+      )
       raise UpdateFailed from error
 
     return PodState(

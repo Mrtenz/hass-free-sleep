@@ -62,8 +62,8 @@ jobs:
         env:
           VERSION: ${{ steps.bump-version.outputs.version }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "hass-free-sleep[bot]"
+          git config user.email "245959007+hass-free-sleep[bot]@users.noreply.github.com"
           git checkout -b "release/v$VERSION"
           
           MANIFEST_FILE="./custom_components/free_sleep/manifest.json"

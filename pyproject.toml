@@ -18,7 +18,8 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-  "ruff (>=0.14.5,<0.15.0)"
+  "ruff (>=0.14.5,<0.15.0)",
+  "pre-commit (>=4.5.0,<5.0.0)"
 ]
 
 [build-system]
@@ -32,6 +33,7 @@ package-mode = false
 poethepoet = { version = "~0.35.0", extras = ["poetry_plugin"]}
 
 [tool.poe.tasks]
+bootstrap = "pre-commit install"
 check = "ruff format --check"
 format = "ruff format"
 lint = "ruff check"

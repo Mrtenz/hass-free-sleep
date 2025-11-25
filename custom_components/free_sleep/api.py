@@ -127,7 +127,9 @@ class FreeSleepAPI:
     :param json_data: The JSON data to send in the update.
     """
     url = f'{self.host}{DEVICE_STATUS_ENDPOINT}'
-    log.debug(f'Updating device status on device at "{url}" with data "{json_data}".')
+    log.debug(
+      f'Updating device status on device at "{url}" with data "{json_data}".'
+    )
 
     await self.post(url, json_data)
 
@@ -138,6 +140,8 @@ class FreeSleepAPI:
     :param json_data: The JSON data to send in the update.
     """
     url = f'{self.host}{SETTINGS_ENDPOINT}'
-    log.debug(f'Updating settings on device at "{url}" with data "{json_data}".')
+    log.debug(
+      f'Updating settings on device at "{url}" with data "{json_data}".'
+    )
 
     await self.post(url, json_data)

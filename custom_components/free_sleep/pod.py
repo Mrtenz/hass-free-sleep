@@ -104,6 +104,10 @@ class Pod:
     data['status']['settings']['ledBrightness'] = brightness
     self.coordinator.async_set_updated_data(data)
 
+  async def reboot(self) -> None:
+    """Reboot the Free Sleep Pod device."""
+    await self.api.run_jobs(['reboot'])
+
 
 class Side:
   """A class that represents a side of a Free Sleep Pod device."""

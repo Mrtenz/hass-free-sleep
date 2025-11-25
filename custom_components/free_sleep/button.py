@@ -45,6 +45,13 @@ POD_BUTTONS: tuple[FreeSleepButtonDescription, ...] = (
     icon='mdi:water-pump',
     handle=lambda pod: pod.prime(),
   ),
+  FreeSleepButtonDescription(
+    name='Reboot',
+    key='reboot',
+    translation_key='reboot',
+    icon='mdi:restart',
+    handle=lambda pod: pod.reboot(),
+  ),
 )
 
 

@@ -35,6 +35,9 @@
     "button": {
       "prime": {
         "name": "Prime"
+      },
+      "reboot": {
+        "name": "Reboot"
       }
     },
     "climate": {

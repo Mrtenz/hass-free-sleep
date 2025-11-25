@@ -15,6 +15,7 @@ from .constants import (
   SETTINGS_ENDPOINT,
   VITALS_SUMMARY_ENDPOINT,
   PodSide,
+  JOBS_ENDPOINT,
 )
 from .logger import log
 
@@ -71,7 +72,7 @@ class FreeSleepAPI:
       response.raise_for_status()
       return await self.parse_response(response)
 
-  async def post(self, url: str, json_data: dict[str, Any]) -> dict[str, Any]:
+  async def post(self, url: str, json_data: dict[str, Any] | list[Any]) -> dict[str, Any]:
     """
     Send a POST request to the specified URL with JSON data and return the JSON
     response.
@@ -145,3 +146,14 @@ class FreeSleepAPI:
     )
 
     await self.post(url, json_data)
+
+  async def run_jobs(self, jobs: list[str]) -> None:
+    """
+    Run specified jobs on the Free Sleep device.
+
+    :param jobs: A list of job names to run.
+    """
+    url = f'{self.host}{JOBS_ENDPOINT}'
+    log.debug(f'Running jobs on device at "{url}" with data "{jobs}".')
+
+    await self.post(url, jobs)

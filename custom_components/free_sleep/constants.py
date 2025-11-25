@@ -5,6 +5,7 @@ from typing import Final, Literal
 DOMAIN: Final = 'free_sleep'
 
 DEVICE_STATUS_ENDPOINT = '/api/deviceStatus'
+JOBS_ENDPOINT = '/api/jobs'
 SETTINGS_ENDPOINT = '/api/settings'
 VITALS_SUMMARY_ENDPOINT = '/api/metrics/vitals/summary'
 

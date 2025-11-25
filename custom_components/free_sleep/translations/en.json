@@ -78,6 +78,11 @@
         "name": "Reboot Daily"
       }
     },
+    "time": {
+      "prime_daily_time": {
+        "name": "Prime Daily Time"
+      }
+    },
     "update": {
       "firmware": {
         "name": "Firmware"

@@ -78,6 +78,19 @@ class Pod:
     data['settings']['primePodDaily']['enabled'] = enabled
     self.coordinator.async_set_updated_data(data)
 
+  async def set_prime_daily_time(self, time: str) -> None:
+    """
+    Set the daily priming time for the Free Sleep Pod device.
+
+    :param time: The desired priming time in HH:MM format.
+    """
+    json_data = {'primePodDaily': {'time': time}}
+    await self.api.update_settings(json_data)
+
+    data = self.coordinator.data
+    data['settings']['primePodDaily']['time'] = time
+    self.coordinator.async_set_updated_data(data)
+
   async def set_reboot_daily(self, enabled: bool) -> None:
     """
     Enable or disable daily rebooting for the Free Sleep Pod device.

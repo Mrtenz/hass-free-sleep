@@ -12,10 +12,10 @@ from aiohttp import ClientResponse, ClientSession
 
 from .constants import (
   DEVICE_STATUS_ENDPOINT,
+  JOBS_ENDPOINT,
   SETTINGS_ENDPOINT,
   VITALS_SUMMARY_ENDPOINT,
   PodSide,
-  JOBS_ENDPOINT,
 )
 from .logger import log
 
@@ -72,7 +72,9 @@ class FreeSleepAPI:
       response.raise_for_status()
       return await self.parse_response(response)
 
-  async def post(self, url: str, json_data: dict[str, Any] | list[Any]) -> dict[str, Any]:
+  async def post(
+    self, url: str, json_data: dict[str, Any] | list[Any]
+  ) -> dict[str, Any]:
     """
     Send a POST request to the specified URL with JSON data and return the JSON
     response.

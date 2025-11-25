@@ -77,6 +77,11 @@
       "reboot_daily": {
         "name": "Reboot Daily"
       }
+    },
+    "update": {
+      "firmware": {
+        "name": "Firmware"
+      }
     }
   }
 }

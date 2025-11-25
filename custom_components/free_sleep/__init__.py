@@ -11,13 +11,14 @@ from .coordinator import FreeSleepCoordinator
 from .logger import log
 from .pod import Pod
 
-PLATFORMS = [
+PLATFORMS: list[Platform] = [
   Platform.BINARY_SENSOR,
   Platform.BUTTON,
   Platform.CLIMATE,
   Platform.NUMBER,
   Platform.SENSOR,
   Platform.SWITCH,
+  Platform.UPDATE,
 ]
 
 

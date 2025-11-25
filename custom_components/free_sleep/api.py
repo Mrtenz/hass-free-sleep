@@ -13,6 +13,7 @@ from aiohttp import ClientResponse, ClientSession
 from .constants import (
   DEVICE_STATUS_ENDPOINT,
   JOBS_ENDPOINT,
+  SERVER_INFO_URL,
   SETTINGS_ENDPOINT,
   VITALS_SUMMARY_ENDPOINT,
   PodSide,
@@ -52,7 +53,7 @@ class FreeSleepAPI:
       log.debug('-> No content')
       return {}
 
-    data = await response.json()
+    data = await response.json(content_type=None)
     log.debug(f'-> {data}')
     return data
 
@@ -122,6 +123,29 @@ class FreeSleepAPI:
     log.debug(f'Fetching vitals for side "{side}" from device at "{url}".')
 
     return await self.get(url, params={'side': side})
+
+  async def fetch_current_version(self) -> str | None:
+    """
+    Fetch the current firmware version from the Free Sleep device.
+
+    :return: The current firmware version as a string, or None if not available.
+    """
+    url = f'{self.host}{DEVICE_STATUS_ENDPOINT}'
+    log.debug(f'Fetching current firmware version from device at "{url}".')
+
+    data = await self.get(url)
+    return data['freeSleep']['version']
+
+  async def fetch_latest_version(self) -> str | None:
+    """
+    Fetch the latest firmware version available on GitHub.
+
+    :return: The latest firmware version as a string, or None if not available.
+    """
+    log.debug(f'Fetching latest firmware version from "{SERVER_INFO_URL}".')
+
+    data = await self.get(SERVER_INFO_URL)
+    return data.get('version')
 
   async def update_device_status(self, json_data: dict[str, Any]) -> None:
     """

@@ -4,10 +4,12 @@ from typing import Final, Literal
 
 DOMAIN: Final = 'free_sleep'
 
-DEVICE_STATUS_ENDPOINT = '/api/deviceStatus'
-JOBS_ENDPOINT = '/api/jobs'
-SETTINGS_ENDPOINT = '/api/settings'
-VITALS_SUMMARY_ENDPOINT = '/api/metrics/vitals/summary'
+DEVICE_STATUS_ENDPOINT: Final = '/api/deviceStatus'
+JOBS_ENDPOINT: Final = '/api/jobs'
+SETTINGS_ENDPOINT: Final = '/api/settings'
+VITALS_SUMMARY_ENDPOINT: Final = '/api/metrics/vitals/summary'
+
+SERVER_INFO_URL: Final = 'https://raw.githubusercontent.com/throwaway31265/free-sleep/refs/heads/main/server/src/serverInfo.json'
 
 EIGHT_SLEEP_MIN_TEMPERATURE_F: Final = 55
 EIGHT_SLEEP_MAX_TEMPERATURE_F: Final = 110

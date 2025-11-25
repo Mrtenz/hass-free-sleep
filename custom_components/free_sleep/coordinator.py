@@ -28,6 +28,13 @@ class PodState(TypedDict):
   vitals: dict[PodSide, Any]
 
 
+class FirmwareState(TypedDict):
+  """A class that represents the firmware state of a Free Sleep Pod device."""
+
+  current_version: str | None
+  latest_version: str | None
+
+
 class FreeSleepCoordinator(DataUpdateCoordinator[PodState]):
   """A class that coordinates data updates for a Free Sleep Pod device."""
 
@@ -89,3 +96,49 @@ class FreeSleepCoordinator(DataUpdateCoordinator[PodState]):
       settings=settings,
       vitals={'left': vitals_left, 'right': vitals_right},
     )
+
+
+class FirmwareUpdateCoordinator(DataUpdateCoordinator[FirmwareState]):
+  """
+  A class that coordinates fetching the latest firmware version from GitHub.
+  This is defined separately to avoid making frequent requests to GitHub when
+  the main coordinator updates every 30 seconds.
+  """
+
+  def __init__(
+    self, hass: HomeAssistant, log: Logger, api: FreeSleepAPI
+  ) -> None:
+    """
+    Initialize the GitHub Update Coordinator.
+
+    :param hass: The Home Assistant instance.
+    :param log: Logger instance.
+    :param api: The Free Sleep API instance.
+    """
+    super().__init__(
+      hass,
+      log,
+      name='Firmware Update Coordinator',
+      update_method=self._async_update_data,
+      update_interval=timedelta(hours=1),
+    )
+
+    self.api = api
+
+  async def _async_update_data(self) -> FirmwareState:
+    """
+    Fetch the latest firmware version from GitHub.
+
+    :return: The latest firmware version as a string, or None if not available.
+    """
+    try:
+      current_version, latest_version = await gather(
+        self.api.fetch_current_version(), self.api.fetch_latest_version()
+      )
+
+      return FirmwareState(
+        current_version=current_version, latest_version=latest_version
+      )
+    except Exception as error:
+      log.error('Unexpected error while fetching firmware version.')
+      raise UpdateFailed from error

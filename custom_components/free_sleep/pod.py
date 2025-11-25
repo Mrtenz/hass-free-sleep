@@ -71,7 +71,8 @@ class Pod:
 
     :param enabled: True to enable daily priming, False to disable.
     """
-    await self.api.set_prime_daily(enabled)
+    json_data = {'primePodDaily': {'enabled': enabled}}
+    await self.api.update_settings(json_data)
 
     data = self.coordinator.data
     data['settings']['primePodDaily']['enabled'] = enabled
@@ -83,7 +84,8 @@ class Pod:
 
     :param enabled: True to enable daily rebooting, False to disable.
     """
-    await self.api.set_reboot_daily(enabled)
+    json_data = {'rebootDaily': enabled}
+    await self.api.update_settings(json_data)
 
     data = self.coordinator.data
     data['settings']['rebootDaily'] = enabled
@@ -95,10 +97,11 @@ class Pod:
 
     :param brightness: The desired brightness level (0-100).
     """
-    await self.api.set_led_brightness(brightness)
+    json_data = {'settings': {'ledBrightness': brightness}}
+    await self.api.update_device_status(json_data)
 
     data = self.coordinator.data
-    data['settings']['ledBrightness'] = brightness
+    data['status']['settings']['ledBrightness'] = brightness
     self.coordinator.async_set_updated_data(data)
 
 
@@ -161,7 +164,8 @@ class Side:
 
     :param active: The desired active state (True for on, False for off).
     """
-    await self.pod.api.set_side_active(self.type, active)
+    json_data = {self.type: {'isOn': active}}
+    await self.pod.api.update_device_status(json_data)
 
     data = self.coordinator.data
     data['status'][self.type]['isOn'] = active
@@ -173,8 +177,22 @@ class Side:
 
     :param temperature_f: The desired target temperature in Fahrenheit.
     """
-    await self.pod.api.set_side_target_temperature(self.type, temperature_f)
+    json_data = {self.type: {'targetTemperatureF': temperature_f}}
+    await self.pod.api.update_device_status(json_data)
 
     data = self.coordinator.data
     data['settings'][self.type]['targetTemperatureF'] = temperature_f
+    self.coordinator.async_set_updated_data(data)
+
+  async def set_away_mode(self, enabled: bool) -> None:
+    """
+    Enable or disable away mode for this side of the Free Sleep Pod device.
+
+    :param enabled: True to enable away mode, False to disable.
+    """
+    json_data = {self.type: {'awayMode': enabled}}
+    await self.pod.api.update_settings(json_data)
+
+    data = self.coordinator.data
+    data['settings'][self.type]['awayMode'] = enabled
     self.coordinator.async_set_updated_data(data)

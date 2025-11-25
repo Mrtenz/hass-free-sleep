@@ -1,7 +1,7 @@
 {
   "domain": "free_sleep",
   "name": "Free Sleep",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "codeowners": [],
   "config_flow": true,
   "dependencies": [],

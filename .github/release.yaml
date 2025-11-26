@@ -1,0 +1,33 @@
+changelog:
+  categories:
+    - title: "🚀 Features"
+      labels:
+        - feature
+
+    - title: "🐛 Bug Fixes"
+      labels:
+        - bug
+
+    - title: "🧰 Maintenance"
+      labels:
+        - chore
+        - refactor
+        - performance
+
+    - title: "📦 Dependencies"
+      labels:
+        - dependencies
+
+    - title: "📝 Other Changes"
+      labels:
+        - *
+
+  exclude:
+    labels:
+      - ci
+      - docs
+      - style
+      - test
+      - no release notes
+    authors:
+      - hass-free-sleep[bot]

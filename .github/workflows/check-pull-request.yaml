@@ -14,7 +14,42 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
+    outputs:
+      type: ${{ steps.get-type.outputs.type }}
     steps:
       - uses: amannn/action-semantic-pull-request@v6
+        id: get-type
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  label-pull-request:
+    name: Label pull request
+    runs-on: ubuntu-latest
+    needs:
+      - check-pull-request
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Get GitHub token
+        uses: actions/create-github-app-token@v2
+        id: github-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: Label PR based on semantic title
+        env:
+          GH_TOKEN: ${{ steps.github-token.outputs.token }}
+          PR_TYPE: ${{ needs.check-pull-request.outputs.type }}
+        run: |
+          if [ -z "$PR_TYPE" ]; then
+            echo "No semantic type found in PR title. Skipping labeling."
+            exit 0
+          fi
+          
+          if [ "$PR_TYPE" = "feat" ]; then
+            PR_TYPE="feature"
+          fi
+          
+          echo "Labeling PR with type: $PR_TYPE"
+          gh pr edit ${{ github.event.pull_request.number }} --add-label "$PR_TYPE"

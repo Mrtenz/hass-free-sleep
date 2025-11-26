@@ -113,7 +113,7 @@
         },
         "schedule": {
           "name": "Schedule",
-          "description": "The temperature schedule to set, as object containing a `temperatures`, `power`, and/or `alarm` property. Note that temperatures are expected to be in Fahrenheit. Refer to the Free Sleep API documentation (https://github.com/throwaway31265/free-sleep/blob/main/server/API.md#apischedules) for more details."
+          "description": "The temperature schedule to set, as object containing a `temperatures`, `power`, and/or `alarm` property. Note that temperatures are expected to be in the unit used in your Home Assistant instance. Refer to the Free Sleep API documentation (https://github.com/throwaway31265/free-sleep/blob/main/server/API.md#apischedules) for more details."
         },
         "side": {
           "name": "Side",

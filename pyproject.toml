@@ -38,6 +38,7 @@ bootstrap = "pre-commit install"
 check = "ruff format --check"
 format = "ruff format"
 lint = "ruff check"
+test = "pytest"
 
 [tool.pytest]
 filterwarnings = [

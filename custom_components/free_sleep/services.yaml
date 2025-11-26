@@ -1,0 +1,45 @@
+set_schedule:
+  fields:
+    side:
+      required: true
+      selector:
+        device:
+          integration: free_sleep
+          multiple: true
+          entity:
+            domain: climate
+
+    day_of_week:
+      required: false
+      example: monday
+      selector:
+        select:
+          translation_key: day_of_week
+          multiple: true
+          options:
+            - monday
+            - tuesday
+            - wednesday
+            - thursday
+            - friday
+            - saturday
+            - sunday
+
+    schedule:
+      required: true
+      example: >
+        temperatures:
+          "02:00": 77
+          "04:00": 79
+        power:
+          "on": "23:00"
+          "off": "09:00"
+          enabled: true
+          onTemperature: 75
+        alarm:
+          time: "09:00"
+          vibrationIntensity: 1
+          vibrationPattern: rise
+          duration: 1
+          enabled: false
+          alarmTemperature: 82

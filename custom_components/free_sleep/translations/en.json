@@ -88,5 +88,38 @@
         "name": "Firmware"
       }
     }
+  },
+  "selector": {
+    "day_of_week": {
+      "options": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      }
+    }
+  },
+  "services": {
+    "set_schedule": {
+      "name": "Set schedule",
+      "description": "Sets the temperature schedule for the Free Sleep device, for the specified days and times.",
+      "fields": {
+        "day_of_week": {
+          "name": "Day of Week",
+          "description": "The day of the week to set the schedule for. If not specified, the schedule will be set for all days."
+        },
+        "schedule": {
+          "name": "Schedule",
+          "description": "The temperature schedule to set, as object containing a `temperatures`, `power`, and/or `alarm` property. Note that temperatures are expected to be in Fahrenheit. Refer to the Free Sleep API documentation (https://github.com/throwaway31265/free-sleep/blob/main/server/API.md#apischedules) for more details."
+        },
+        "side": {
+          "name": "Side",
+          "description": "The side(s) of the bed to set the schedule for."
+        }
+      }
+    }
   }
 }

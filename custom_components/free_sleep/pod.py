@@ -1,6 +1,6 @@
 """Classes to represent a Free Sleep Pod device and its sides."""
 
-from typing import Any
+from typing import Any, TypedDict, Unpack
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -10,6 +10,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from .api import FreeSleepAPI
 from .constants import PodSide
 from .coordinator import PodState
+from .logger import log
 
 
 class Pod:
@@ -160,6 +161,7 @@ class Side:
       'name': self.name,
       'manufacturer': self.pod.manufacturer,
       'model': self.pod.model,
+      'via_device': (self.pod.manufacturer, self.pod.id),
     }
 
   def get_side_data(self, data: PodState) -> dict[str, Any]:
@@ -213,3 +215,28 @@ class Side:
     data = self.coordinator.data
     data['settings'][self.type]['awayMode'] = enabled
     self.coordinator.async_set_updated_data(data)
+
+  class ScheduleOptions(TypedDict):
+    """
+    Typed dict representing the schedule options for a Free Sleep Pod side,
+    consisting of days of the week and the schedule dictionary.
+    """
+
+    days_of_week: list[str]
+    schedule: dict
+
+  async def set_schedule(self, **kwargs: Unpack[ScheduleOptions]) -> None:
+    """
+    Set the sleep schedule for this side of the Free Sleep Pod device.
+
+    :param kwargs: Keyword arguments passed to set_schedule.
+    """
+    days_of_week = kwargs.get('days_of_week')
+    schedule = kwargs.get('schedule')
+
+    json_data = {self.type: dict.fromkeys(days_of_week, schedule)}
+
+    log.debug(
+      f'Setting schedule for side "{self.type}" with data "{json_data}".'
+    )
+    await self.pod.api.update_schedule(json_data)

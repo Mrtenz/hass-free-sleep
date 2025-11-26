@@ -13,6 +13,7 @@ from aiohttp import ClientResponse, ClientSession
 from .constants import (
   DEVICE_STATUS_ENDPOINT,
   JOBS_ENDPOINT,
+  SCHEDULES_ENDPOINT,
   SERVER_INFO_URL,
   SETTINGS_ENDPOINT,
   VITALS_SUMMARY_ENDPOINT,
@@ -169,6 +170,19 @@ class FreeSleepAPI:
     url = f'{self.host}{SETTINGS_ENDPOINT}'
     log.debug(
       f'Updating settings on device at "{url}" with data "{json_data}".'
+    )
+
+    await self.post(url, json_data)
+
+  async def update_schedule(self, json_data: dict[str, Any]) -> None:
+    """
+    Update the sleep schedule on the Free Sleep device.
+
+    :param json_data: The JSON data representing the new schedule.
+    """
+    url = f'{self.host}{SCHEDULES_ENDPOINT}'
+    log.debug(
+      f'Updating schedule on device at "{url}" with data "{json_data}".'
     )
 
     await self.post(url, json_data)

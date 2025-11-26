@@ -25,7 +25,6 @@ class Pod:
     hass: HomeAssistant,
     coordinator: DataUpdateCoordinator[PodState],
     entry: ConfigEntry,
-    name: str,
     host: str,
   ) -> None:
     """
@@ -34,16 +33,16 @@ class Pod:
     :param hass: The Home Assistant instance.
     :param coordinator: The data update coordinator for the pod.
     :param entry: The configuration entry.
-    :param name: The name of the Free Sleep Pod device. This should be fetched
-    from the device during setup.
     :param host: The host address of the Free Sleep Pod device.
     """
     self.hass = hass
     self.coordinator = coordinator
     self.api = FreeSleepAPI(host, async_get_clientsession(hass))
 
+    name = coordinator.data['status']['hubVersion']
+
     self.id = entry.entry_id
-    self.model: str = name
+    self.model = name
     self.host = host
     self.name = name
     self.sides = [

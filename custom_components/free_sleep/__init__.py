@@ -53,6 +53,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     name,
   )
 
+  await coordinator.async_config_entry_first_refresh()
   pod = Pod(hass, coordinator, entry, status['hubVersion'], entry.data['host'])
 
   hass.data.setdefault(DOMAIN, {})
@@ -61,7 +62,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     coordinator,
   )
 
-  await coordinator.async_config_entry_first_refresh()
   await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
   return True

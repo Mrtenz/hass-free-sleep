@@ -159,7 +159,7 @@ class Side:
     self.pod = pod
     self.type = side
     self.id = f'{pod.id}_{side}'
-    self.name = f'{pod.model} {side.capitalize()}'
+    self.name = f'{pod.model} {coordinator.data["settings"][side]["name"]}'
 
   @property
   def device_info(self) -> dict:

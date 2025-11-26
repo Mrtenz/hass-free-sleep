@@ -57,5 +57,13 @@ jobs:
             PR_TYPE="feature"
           fi
           
+          if [ "$PR_TYPE" = "fix" ]; then
+            PR_TYPE="bug"
+          fi
+          
+          if [ "$PR_TYPE" = "perf" ]; then
+            PR_TYPE="performance"
+          fi
+          
           echo "Labeling PR with type: $PR_TYPE"
           gh pr edit "$PR_NUMBER" --add-label "$PR_TYPE"

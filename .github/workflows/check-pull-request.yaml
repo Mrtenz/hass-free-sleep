@@ -46,6 +46,7 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.github-token.outputs.token }}
           PR_TYPE: ${{ needs.check-pull-request.outputs.type }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           if [ -z "$PR_TYPE" ]; then
             echo "No semantic type found in PR title. Skipping labeling."
@@ -57,4 +58,4 @@ jobs:
           fi
           
           echo "Labeling PR with type: $PR_TYPE"
-          gh pr edit ${{ github.event.pull_request.number }} --add-label "$PR_TYPE"
+          gh pr edit "$PR_NUMBER" --add-label "$PR_TYPE"

@@ -19,7 +19,8 @@ dependencies = [
 [dependency-groups]
 dev = [
   "ruff (>=0.14.5,<0.15.0)",
-  "pre-commit (>=4.5.0,<5.0.0)"
+  "pre-commit (>=4.5.0,<5.0.0)",
+  "pytest (>=9.0.1,<10.0.0)"
 ]
 
 [build-system]
@@ -37,6 +38,11 @@ bootstrap = "pre-commit install"
 check = "ruff format --check"
 format = "ruff format"
 lint = "ruff check"
+
+[tool.pytest]
+filterwarnings = [
+  "ignore::DeprecationWarning"
+]
 
 [tool.ruff]
 line-length = 80
@@ -59,6 +65,9 @@ ignore = [
   "Q000",
   "Q003",
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]
 
 [tool.ruff.format]
 quote-style = "single"

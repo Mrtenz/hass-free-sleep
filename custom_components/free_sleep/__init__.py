@@ -43,18 +43,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
   :return: True if setup was successful.
   """
   api = FreeSleepAPI(entry.data['host'], async_get_clientsession(hass))
-  status = await api.fetch_device_status()
-  name = status['hubVersion']
-
   coordinator = FreeSleepCoordinator(
     hass,
     log,
     api,
-    name,
   )
 
   await coordinator.async_config_entry_first_refresh()
-  pod = Pod(hass, coordinator, entry, status['hubVersion'], entry.data['host'])
+  pod = Pod(hass, coordinator, entry, entry.data['host'])
 
   hass.data.setdefault(DOMAIN, {})
   hass.data[DOMAIN][entry.entry_id] = (

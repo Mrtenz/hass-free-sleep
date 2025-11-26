@@ -40,7 +40,7 @@ class FreeSleepCoordinator(DataUpdateCoordinator[PodState]):
   """A class that coordinates data updates for a Free Sleep Pod device."""
 
   def __init__(
-    self, hass: HomeAssistant, log: Logger, api: FreeSleepAPI, name: str
+    self, hass: HomeAssistant, log: Logger, api: FreeSleepAPI
   ) -> None:
     """
     Initialize the Free Sleep Coordinator.
@@ -51,7 +51,7 @@ class FreeSleepCoordinator(DataUpdateCoordinator[PodState]):
     super().__init__(
       hass,
       log,
-      name=name,
+      name='Free Sleep Coordinator',
       update_method=self._async_update_data,
       update_interval=timedelta(seconds=30),
     )

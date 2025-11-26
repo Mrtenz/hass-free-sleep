@@ -75,6 +75,16 @@ class FreeSleepSideSwitchDescription(FreeSleepSwitchDescription):
 
 POD_SWITCHES: tuple[FreeSleepSwitchDescription, ...] = (
   FreeSleepSwitchDescription(
+    name='Biometrics',
+    key='biometrics',
+    translation_key='biometrics',
+    device_class=SwitchDeviceClass.SWITCH,
+    on_icon='mdi:account-settings',
+    off_icon='mdi:account-settings-outline',
+    get_value=lambda data: data['services']['biometrics']['enabled'],
+    set_value=lambda pod, value: pod.set_biometrics(value),
+  ),
+  FreeSleepSwitchDescription(
     name='Prime Daily',
     key='prime_daily',
     translation_key='prime_daily',

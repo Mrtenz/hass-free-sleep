@@ -23,8 +23,9 @@ from .logger import log
 class PodState(TypedDict):
   """A class that represents the state of a Free Sleep Pod device."""
 
-  status: dict[str, Any]
+  services: dict[str, Any]
   settings: dict[str, Any]
+  status: dict[str, Any]
   vitals: dict[PodSide, Any]
 
 
@@ -69,10 +70,13 @@ class FreeSleepCoordinator(DataUpdateCoordinator[PodState]):
       self.api.fetch_settings(),
       self.api.fetch_vitals('left'),
       self.api.fetch_vitals('right'),
+      self.api.fetch_services(),
     ]
 
     try:
-      status, settings, vitals_left, vitals_right = await gather(*requests)
+      status, settings, vitals_left, vitals_right, services = await gather(
+        *requests
+      )
     except TimeoutError as error:
       log.error(
         f'Timeout while fetching data from device at "{self.api.host}".'
@@ -92,8 +96,9 @@ class FreeSleepCoordinator(DataUpdateCoordinator[PodState]):
       raise UpdateFailed from error
 
     return PodState(
-      status=status,
+      services=services,
       settings=settings,
+      status=status,
       vitals={'left': vitals_left, 'right': vitals_right},
     )
 

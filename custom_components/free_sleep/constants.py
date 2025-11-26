@@ -8,6 +8,7 @@ SET_SCHEDULE_SERVICE: Final = 'set_schedule'
 
 DEVICE_STATUS_ENDPOINT: Final = '/api/deviceStatus'
 JOBS_ENDPOINT: Final = '/api/jobs'
+SERVICES_ENDPOINT: Final = '/api/services'
 SETTINGS_ENDPOINT: Final = '/api/settings'
 SCHEDULES_ENDPOINT: Final = '/api/schedules'
 VITALS_SUMMARY_ENDPOINT: Final = '/api/metrics/vitals/summary'

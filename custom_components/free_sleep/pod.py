@@ -118,6 +118,19 @@ class Pod:
     data['status']['settings']['ledBrightness'] = brightness
     self.coordinator.async_set_updated_data(data)
 
+  async def set_biometrics(self, enabled: bool) -> None:
+    """
+    Enable or disable biometrics for the Free Sleep Pod device.
+
+    :param enabled: True to enable biometrics, False to disable.
+    """
+    json_data = {'biometrics': {'enabled': enabled}}
+    await self.api.update_services(json_data)
+
+    data = self.coordinator.data
+    data['services']['biometrics']['enabled'] = enabled
+    self.coordinator.async_set_updated_data(data)
+
   async def reboot(self) -> None:
     """Reboot the Free Sleep Pod device."""
     await self.api.run_jobs(['reboot'])

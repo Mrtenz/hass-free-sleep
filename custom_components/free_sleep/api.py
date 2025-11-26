@@ -15,6 +15,7 @@ from .constants import (
   JOBS_ENDPOINT,
   SCHEDULES_ENDPOINT,
   SERVER_INFO_URL,
+  SERVICES_ENDPOINT,
   SETTINGS_ENDPOINT,
   VITALS_SUMMARY_ENDPOINT,
   PodSide,
@@ -113,6 +114,17 @@ class FreeSleepAPI:
 
     return await self.get(url)
 
+  async def fetch_services(self) -> dict[str, Any]:
+    """
+    Fetch the services from the Free Sleep device.
+
+    :return: A dictionary containing the services.
+    """
+    url = f'{self.host}{SERVICES_ENDPOINT}'
+    log.debug(f'Fetching services from device at "{url}".')
+
+    return await self.get(url)
+
   async def fetch_vitals(self, side: PodSide) -> dict[str, Any]:
     """
     Fetch the current vitals for a specific side of the Free Sleep device.
@@ -183,6 +195,19 @@ class FreeSleepAPI:
     url = f'{self.host}{SCHEDULES_ENDPOINT}'
     log.debug(
       f'Updating schedule on device at "{url}" with data "{json_data}".'
+    )
+
+    await self.post(url, json_data)
+
+  async def update_services(self, json_data: dict[str, Any]) -> None:
+    """
+    Update the services on the Free Sleep device.
+
+    :param json_data: The JSON data representing the new services.
+    """
+    url = f'{self.host}{SERVICES_ENDPOINT}'
+    log.debug(
+      f'Updating services on device at "{url}" with data "{json_data}".'
     )
 
     await self.post(url, json_data)

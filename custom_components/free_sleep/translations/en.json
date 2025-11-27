@@ -1,26 +1,26 @@
 {
   "config": {
-    "step": {
-      "user": {
-        "title": "Configure Free Sleep",
-        "description": "Enter the URL of your Free Sleep device, including the protocol and port (e.g., http://10.0.0.5:3000).",
-        "data": {
-          "host": "Host URL",
-          "update_interval": "Update interval (seconds, optional)"
-        }
-      },
-      "reconfigure": {
-        "title": "Reconfigure Free Sleep",
-        "description": "Enter the URL of your Free Sleep device, including the protocol and port (e.g., http://10.0.0.5:3000).",
-        "data": {
-          "host": "Host URL",
-          "update_interval": "Update interval (seconds, optional)"
-        }
-      }
-    },
     "error": {
       "cannot_connect": "Unable to connect to the Free Sleep device. Please check the URL and ensure the device is reachable.",
       "invalid_url": "The host URL must start with `http://` or `https://`."
+    },
+    "step": {
+      "reconfigure": {
+        "data": {
+          "host": "Host URL",
+          "update_interval": "Update interval (seconds, optional)"
+        },
+        "description": "Enter the URL of your Free Sleep device, including the protocol and port (e.g., http://10.0.0.5:3000).",
+        "title": "Reconfigure Free Sleep"
+      },
+      "user": {
+        "data": {
+          "host": "Host URL",
+          "update_interval": "Update interval (seconds, optional)"
+        },
+        "description": "Enter the URL of your Free Sleep device, including the protocol and port (e.g., http://10.0.0.5:3000).",
+        "title": "Configure Free Sleep"
+      }
     }
   },
   "entity": {
@@ -54,6 +54,9 @@
       }
     },
     "sensor": {
+      "version": {
+        "name": "Version"
+      },
       "heart_rate": {
         "name": "Heart Rate"
       },
@@ -62,9 +65,6 @@
       },
       "respiratory_rate": {
         "name": "Respiratory Rate"
-      },
-      "version": {
-        "name": "Version"
       },
       "wifi_strength": {
         "name": "WiFi Strength"
@@ -95,13 +95,13 @@
   "selector": {
     "day_of_week": {
       "options": {
-        "monday": "Monday",
-        "tuesday": "Tuesday",
-        "wednesday": "Wednesday",
-        "thursday": "Thursday",
         "friday": "Friday",
+        "monday": "Monday",
         "saturday": "Saturday",
-        "sunday": "Sunday"
+        "sunday": "Sunday",
+        "thursday": "Thursday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday"
       }
     }
   },

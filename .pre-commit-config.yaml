@@ -7,13 +7,26 @@ repos:
       - id: poetry-check
       - id: poetry-lock
 
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: end-of-file-fixer
+      - id: no-commit-to-branch
+      - id: pretty-format-json
+        args:
+          - --autofix
+          - --top-keys=name,version
+      - id: trailing-whitespace
+
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.14.6
     hooks:
+      - id: ruff-format
       - id: ruff-check
         args:
           - --fix
-      - id: ruff-format
 
   - repo: https://github.com/google/yamlfmt
     rev: v0.19.0

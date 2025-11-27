@@ -6,7 +6,7 @@ An unofficial Home Assistant custom integration for Free Sleep devices.
 > This integration was only tested with an Eight Sleep Pod 4, and does not
 > guarantee compatibility with other Eight Sleep devices. Some functionality
 > like the Pod 5 base adjustments are not supported at this time.
-> 
+>
 > Some functionality like vitals may not be accurate.
 
 This integration allows you to control and monitor your Free Sleep device

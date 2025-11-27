@@ -63,12 +63,8 @@ jobs:
         uses: ./.github/actions/setup-environment
         with:
           python-version: 3.14
-      - name: Lint source code
-        run: poetry poe lint
-      - name: Lint YAML files
-        run: poetry run pre-commit run -a --show-diff-on-failure yamlfmt
-      - name: Check formatting
-        run: poetry poe format --check
+      - name: Lint
+        run: poetry run pre-commit run -a --show-diff-on-failure
 
   check-hacs:
     name: Check HACS compatibility

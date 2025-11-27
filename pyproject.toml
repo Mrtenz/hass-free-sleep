@@ -74,4 +74,3 @@ ignore = [
 quote-style = "single"
 indent-style = "space"
 docstring-code-format = true
-

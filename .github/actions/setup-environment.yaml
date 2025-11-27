@@ -1,0 +1,55 @@
+name: Set up environment
+description: Set up Python environment with Poetry and dependencies installed.
+
+inputs:
+  python-version:
+    description: 'The Python version to set up.'
+    required: true
+    default: '3.14'
+  cache-dependencies:
+    description: 'Whether to cache dependencies.'
+    required: false
+    default: 'false'
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v6
+    - name: Set pipx variables
+      id: pipx
+      run: |
+        PIPX_BIN_DIR="${{ github.workspace }}/.cache/pipx/bin"
+        echo "PIPX_HOME=${{ github.workspace }}/.cache/pipx/home" >> "$GITHUB_ENV"
+        echo "PIPX_BIN_DIR=$PIPX_BIN_DIR" >> "$GITHUB_ENV"
+        echo "$PIPX_BIN_DIR" >> "$GITHUB_PATH"
+        echo "pipx-cache-path=${{ github.workspace }}/.cache/pipx" >> "$GITHUB_OUTPUT"
+    - name: Set pre-commit variables
+      run: |
+        echo "PRE_COMMIT_HOME=${{ github.workspace }}/.cache/pre-commit" >> "$GITHUB_ENV"
+    - name: Restore pipx cache
+      if: ${{ inputs.cache-dependencies == 'false' }}
+      uses: actions/cache/restore@v4
+      with:
+        key: pipx-${{ hashFiles('**/poetry.lock') }}
+        restore-keys: pipx-
+    - name: Cache pre-commit
+      uses: actions/cache@v4
+      with:
+        key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+        path: ${{ env.PRE_COMMIT_HOME }}
+    - name: Install poetry
+      run: pipx install poetry
+    - name: Save pipx cache
+      if: ${{ inputs.cache-dependencies == 'true' }}
+      uses: actions/cache/save@v4
+      with:
+        key: pipx-${{ hashFiles('**/poetry.lock') }}
+        path: ${{ steps.pipx.outputs.pipx-cache-path }}
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: poetry
+    - name: Install dependencies
+      run: poetry install

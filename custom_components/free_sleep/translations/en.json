@@ -54,9 +54,6 @@
       }
     },
     "sensor": {
-      "version": {
-        "name": "Version"
-      },
       "heart_rate": {
         "name": "Heart Rate"
       },
@@ -65,6 +62,9 @@
       },
       "respiratory_rate": {
         "name": "Respiratory Rate"
+      },
+      "version": {
+        "name": "Version"
       },
       "wifi_strength": {
         "name": "WiFi Strength"

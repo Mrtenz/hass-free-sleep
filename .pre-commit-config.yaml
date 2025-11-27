@@ -16,7 +16,7 @@ repos:
       - id: pretty-format-json
         args:
           - --autofix
-          - --top-keys=name,title,version,description
+          - --top-keys=domain,name,title,description
       - id: trailing-whitespace
 
   - repo: https://github.com/astral-sh/ruff-pre-commit

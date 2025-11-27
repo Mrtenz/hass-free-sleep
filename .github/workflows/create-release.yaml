@@ -79,8 +79,9 @@ jobs:
           GH_TOKEN: ${{ steps.github-token.outputs.token }}
           BASE_BRANCH: ${{ github.event.inputs.base-branch }}
           VERSION: ${{ steps.bump-version.outputs.version }}
+          REPOSITORY: ${{ github.repository }}
         run: |
-          RELEASE_NOTES=$(gh api --method POST /repos/{owner}/{repo}/releases/generate-notes \
+          RELEASE_NOTES=$(gh api --method POST "/repos/$REPOSITORY/releases/generate-notes" \
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             -f "tag_name=v$VERSION" \

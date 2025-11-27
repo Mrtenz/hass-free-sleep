@@ -12,7 +12,8 @@ jobs:
     name: Check workflows
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout repository
+        uses: actions/checkout@v6
       - name: Download actionlint
         id: download-actionlint
         run: bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/e7d448ef7507c20fc4c88a95d0c448b848cd6127/scripts/download-actionlint.bash) 1.7.8
@@ -29,15 +30,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-      - name: Install poetry
-        run: pipx install poetry
-      - name: Set up Python
-        uses: actions/setup-python@v6
+      - name: Set up environment
+        uses: ./.github/actions/setup-environment
         with:
           python-version: 3.14
-          cache: poetry
-      - name: Install dependencies
-        run: poetry install
+          cache-dependencies: 'true'
 
   test:
     name: Test
@@ -47,15 +44,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-      - name: Install poetry
-        run: pipx install poetry
-      - name: Set up Python
-        uses: actions/setup-python@v6
+      - name: Set up environment
+        uses: ./.github/actions/setup-environment
         with:
           python-version: 3.14
-          cache: poetry
-      - name: Install dependencies
-        run: poetry install
       - name: Test
         run: poetry poe test
 
@@ -67,37 +59,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-      - name: Install poetry
-        run: pipx install poetry
-      - name: Set up Python
-        uses: actions/setup-python@v6
+      - name: Set up environment
+        uses: ./.github/actions/setup-environment
         with:
           python-version: 3.14
-          cache: poetry
-      - name: Install dependencies
-        run: poetry install
       - name: Lint source code
         run: poetry poe lint
       - name: Lint YAML files
         run: poetry run pre-commit run -a --show-diff-on-failure yamlfmt
-
-  format:
-    name: Format
-    runs-on: ubuntu-latest
-    needs:
-      - prepare
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-      - name: Install poetry
-        run: pipx install poetry
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: 3.14
-          cache: poetry
-      - name: Install dependencies
-        run: poetry install
       - name: Check formatting
         run: poetry poe format --check
 
@@ -118,7 +87,6 @@ jobs:
     needs:
       - test
       - lint
-      - format
       - check-hacs
     outputs:
       passed: ${{ steps.set-output.outputs.passed }}

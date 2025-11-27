@@ -72,11 +72,12 @@ jobs:
     needs:
       - prepare
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
       - name: Check HACS compatibility
         uses: hacs/action@22.5.0
         with:
           category: integration
-
       - name: Check Hassfest
         uses: home-assistant/actions/hassfest@6778c32c6da322382854bd824e30fd4a4f3c20e5
 

@@ -66,8 +66,8 @@ jobs:
       - name: Lint
         run: poetry run pre-commit run -a --show-diff-on-failure
 
-  check-hacs:
-    name: Check HACS compatibility
+  check-integration:
+    name: Check integration
     runs-on: ubuntu-latest
     needs:
       - prepare
@@ -76,6 +76,9 @@ jobs:
         uses: hacs/action@22.5.0
         with:
           category: integration
+
+      - name: Check Hassfest
+        uses: home-assistant/actions/hassfest@6778c32c6da322382854bd824e30fd4a4f3c20e5
 
   all-jobs-complete:
     name: All jobs complete

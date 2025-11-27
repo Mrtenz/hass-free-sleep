@@ -18,6 +18,7 @@ runs:
       uses: actions/checkout@v6
     - name: Set pipx variables
       id: pipx
+      shell: bash
       run: |
         PIPX_BIN_DIR="${{ github.workspace }}/.cache/pipx/bin"
         echo "PIPX_HOME=${{ github.workspace }}/.cache/pipx/home" >> "$GITHUB_ENV"
@@ -25,6 +26,7 @@ runs:
         echo "$PIPX_BIN_DIR" >> "$GITHUB_PATH"
         echo "pipx-cache-path=${{ github.workspace }}/.cache/pipx" >> "$GITHUB_OUTPUT"
     - name: Set pre-commit variables
+      shell: bash
       run: |
         echo "PRE_COMMIT_HOME=${{ github.workspace }}/.cache/pre-commit" >> "$GITHUB_ENV"
     - name: Restore pipx cache
@@ -39,6 +41,7 @@ runs:
         key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
         path: ${{ env.PRE_COMMIT_HOME }}
     - name: Install poetry
+      shell: bash
       run: pipx install poetry
     - name: Save pipx cache
       if: ${{ inputs.cache-dependencies == 'true' }}
@@ -52,4 +55,5 @@ runs:
         python-version: ${{ inputs.python-version }}
         cache: poetry
     - name: Install dependencies
+      shell: bash
       run: poetry install

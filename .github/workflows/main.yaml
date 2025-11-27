@@ -86,7 +86,7 @@ jobs:
     needs:
       - test
       - lint
-      - check-hacs
+      - check-integration
     outputs:
       passed: ${{ steps.set-output.outputs.passed }}
     steps:

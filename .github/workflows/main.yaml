@@ -29,6 +29,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+      - name: Set pipx variables
+        id: pipx
+        run: |
+          PIPX_BIN_DIR="${{ github.workspace }}/.cache/pipx/bin"
+          echo "PIPX_HOME=${{ github.workspace }}/.cache/pipx/home" >> "$GITHUB_ENV"
+          echo "PIPX_BIN_DIR=$PIPX_BIN_DIR" >> "$GITHUB_ENV"
+          echo "$PIPX_BIN_DIR" >> "$GITHUB_PATH"
+
+          echo "pipx-cache-path=${{ github.workspace }}/.cache/pipx" >> "$GITHUB_OUTPUT"
       - name: Install poetry
         run: pipx install poetry
       - name: Set up Python
@@ -38,13 +47,11 @@ jobs:
           cache: poetry
       - name: Install dependencies
         run: poetry install
-      - name: Echo PIPX_HOME
-        run: echo "PIPX_HOME=${{ env.PIPX_HOME }}"
       - name: Save pipx cache
         uses: actions/cache/save@v4
         with:
           key: pipx-${{ hashFiles('**/poetry.lock') }}
-          path: ${{ env.PIPX_HOME }}
+          path: ${{ steps.pipx.outputs.pipx-cache-path }}
 
   test:
     name: Test
@@ -54,12 +61,21 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+      - name: Set pipx variables
+        id: pipx
+        run: |
+          PIPX_BIN_DIR="${{ github.workspace }}/.cache/pipx/bin"
+          echo "PIPX_HOME=${{ github.workspace }}/.cache/pipx/home" >> "$GITHUB_ENV"
+          echo "PIPX_BIN_DIR=$PIPX_BIN_DIR" >> "$GITHUB_ENV"
+          echo "$PIPX_BIN_DIR" >> "$GITHUB_PATH"
+
+          echo "pipx-cache-path=${{ github.workspace }}/.cache/pipx" >> "$GITHUB_OUTPUT"
       - name: Restore pipx cache
         uses: actions/cache/restore@v4
         with:
           key: pipx-${{ hashFiles('**/poetry.lock') }}
           restore-keys: pipx-
-          path: ${{ env.PIPX_HOME }}
+          path: ${{ steps.pipx.outputs.pipx-cache-path }}
       - name: Install poetry
         run: pipx install poetry
       - name: Set up Python

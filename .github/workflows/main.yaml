@@ -57,6 +57,7 @@ jobs:
       - name: Restore pipx cache
         uses: actions/cache/restore@v4
         with:
+          key: pipx-${{ hashFiles('**/poetry.lock') }}
           restore-keys: pipx-
           path: ${{ env.PIPX_HOME }}
       - name: Install poetry

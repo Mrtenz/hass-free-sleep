@@ -88,7 +88,11 @@ jobs:
             -f "target_commitish=$BASE_BRANCH" \
             -q .body)
           
-          echo "release-notes=$RELEASE_NOTES" >> "$GITHUB_OUTPUT"
+          {
+            echo "release-notes<<EOF"
+            echo "$RELEASE_NOTES"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Create pull request
         env:

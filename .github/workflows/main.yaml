@@ -76,8 +76,10 @@ jobs:
           cache: poetry
       - name: Install dependencies
         run: poetry install
-      - name: Lint
+      - name: Lint source code
         run: poetry poe lint
+      - name: Lint YAML files
+        run: pre-commit run -a --show-diff-on-failure yamlfmt
 
   format:
     name: Format
@@ -162,7 +164,7 @@ jobs:
           BEFORE: ${{ github.event.before }}
         run: |
           git fetch origin "$BEFORE"
-          
+
           MANIFEST_FILE="./custom_components/free_sleep/manifest.json"
           VERSION_BEFORE="$(git show "$BEFORE":"$MANIFEST_FILE" | jq --raw-output .version)"
           VERSION_AFTER="$(jq --raw-output .version "$MANIFEST_FILE")"

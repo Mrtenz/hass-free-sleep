@@ -65,11 +65,11 @@ jobs:
           git config user.name "hass-free-sleep[bot]"
           git config user.email "245959007+hass-free-sleep[bot]@users.noreply.github.com"
           git checkout -b "release/v$VERSION"
-          
+
           MANIFEST_FILE="./custom_components/free_sleep/manifest.json"
           jq --arg version "$VERSION" '.version = $version' "$MANIFEST_FILE" > tmp.json && mv tmp.json "$MANIFEST_FILE"
           git add "$MANIFEST_FILE"
-          
+
           git commit -m "chore: Bump version to v$VERSION"
           git push origin "release/v$VERSION"
 
@@ -87,7 +87,7 @@ jobs:
             -f "tag_name=v$VERSION" \
             -f "target_commitish=$BASE_BRANCH" \
             -q .body)
-          
+
           {
             echo "release-notes<<EOF"
             echo "$RELEASE_NOTES"

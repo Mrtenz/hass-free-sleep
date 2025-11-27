@@ -179,7 +179,5 @@ jobs:
     needs:
       - is-release
     uses: ./.github/workflows/publish-release.yaml
-    with:
-      commit-sha: ${{ github.sha }}
     permissions:
       contents: write

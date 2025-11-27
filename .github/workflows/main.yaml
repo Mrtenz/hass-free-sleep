@@ -69,8 +69,6 @@ jobs:
   check-integration:
     name: Check integration
     runs-on: ubuntu-latest
-    needs:
-      - prepare
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6

@@ -12,7 +12,8 @@ jobs:
     name: Check workflows
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout repository
+        uses: actions/checkout@v6
       - name: Download actionlint
         id: download-actionlint
         run: bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/e7d448ef7507c20fc4c88a95d0c448b848cd6127/scripts/download-actionlint.bash) 1.7.8
@@ -27,6 +28,8 @@ jobs:
     needs:
       - check-workflows
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
       - name: Set up environment
         uses: ./.github/actions/setup-environment
         with:
@@ -39,6 +42,8 @@ jobs:
     needs:
       - prepare
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
       - name: Set up environment
         uses: ./.github/actions/setup-environment
         with:
@@ -52,6 +57,8 @@ jobs:
     needs:
       - prepare
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
       - name: Set up environment
         uses: ./.github/actions/setup-environment
         with:

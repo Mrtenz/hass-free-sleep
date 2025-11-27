@@ -33,6 +33,7 @@ runs:
       with:
         key: pipx-${{ hashFiles('**/poetry.lock') }}
         restore-keys: pipx-
+        path: ${{ steps.pipx.outputs.pipx-cache-path }}
     - name: Cache pre-commit
       uses: actions/cache@v4
       with:

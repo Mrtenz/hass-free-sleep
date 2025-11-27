@@ -79,7 +79,7 @@ jobs:
       - name: Lint source code
         run: poetry poe lint
       - name: Lint YAML files
-        run: pre-commit run -a --show-diff-on-failure yamlfmt
+        run: poetry run pre-commit run -a --show-diff-on-failure yamlfmt
 
   format:
     name: Format

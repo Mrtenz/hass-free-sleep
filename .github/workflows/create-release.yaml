@@ -73,14 +73,31 @@ jobs:
           git commit -m "chore: Bump version to v$VERSION"
           git push origin "release/v$VERSION"
 
+      - name: Get release notes
+        id: release-notes
+        env:
+          GH_TOKEN: ${{ steps.github-token.outputs.token }}
+          BASE_BRANCH: ${{ github.event.inputs.base-branch }}
+          VERSION: ${{ steps.bump-version.outputs.version }}
+        run: |
+          RELEASE_NOTES=$(gh api --method POST /repos/{owner}/{repo}/releases/generate-notes \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -f "tag_name=v$VERSION" \
+            -f "target_commitish=$BASE_BRANCH" \
+            -q .body)
+          
+          echo "release-notes=$RELEASE_NOTES" >> "$GITHUB_OUTPUT"
+
       - name: Create pull request
         env:
           BASE_BRANCH: ${{ github.event.inputs.base-branch }}
           VERSION: ${{ steps.bump-version.outputs.version }}
           GH_TOKEN: ${{ steps.github-token.outputs.token }}
+          RELEASE_NOTES: ${{ steps.release-notes.outputs.release-notes }}
         run: |
           gh pr create \
             --title "chore: Release $VERSION" \
-            --body "This is the release candidate for version $VERSION." \
+            --body "$RELEASE_NOTES" \
             --head "release/v$VERSION" \
             --base "$BASE_BRANCH"

@@ -32,23 +32,10 @@ jobs:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
-      - name: Checkout repository
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ github.event.inputs.base-branch }}
-          token: ${{ steps.github-token.outputs.token }}
-
-      - name: Install poetry
-        run: pipx install poetry
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
+      - name: Set up environment
+        uses: ./.github/actions/setup-environment
         with:
           python-version: 3.14
-          cache: poetry
-
-      - name: Install dependencies
-        run: poetry install
 
       - name: Bump version
         id: bump-version

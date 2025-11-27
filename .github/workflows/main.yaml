@@ -38,6 +38,13 @@ jobs:
           cache: poetry
       - name: Install dependencies
         run: poetry install
+      - name: Echo PIPX_HOME
+        run: echo "PIPX_HOME=${{ env.PIPX_HOME }}"
+      - name: Save pipx cache
+        uses: actions/cache/save@v4
+        with:
+          key: pipx-${{ hashFiles('**/poetry.lock') }}
+          path: ${{ env.PIPX_HOME }}
 
   test:
     name: Test
@@ -47,6 +54,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+      - name: Restore pipx cache
+        uses: actions/cache/restore@v4
+        with:
+          restore-keys: pipx-
+          path: ${{ env.PIPX_HOME }}
       - name: Install poetry
         run: pipx install poetry
       - name: Set up Python
@@ -89,6 +101,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+      - name: Cache pipx
+        uses: actions/cache@v4
+        env:
+          PIPX_HOME: ${{ github.workspace }}/.pipx
+        with:
+          key: pipx-${{ hashFiles('**/poetry.lock') }}
+          path: ${{ env.PIPX_HOME }}
+      - name: Cache pre-commit
+        uses: actions/cache@v4
+        with:
+          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+          path: ~/.cache/pre-commit
       - name: Install poetry
         run: pipx install poetry
       - name: Set up Python

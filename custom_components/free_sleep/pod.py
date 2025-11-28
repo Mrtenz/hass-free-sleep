@@ -65,6 +65,16 @@ class Pod:
       'model': self.model,
     }
 
+  async def execute_command(self, command: str, value: str) -> dict[str, Any]:
+    """
+    Execute a command on the Free Sleep Pod device.
+
+    :param command: The command to execute.
+    :param value: The value associated with the command.
+    """
+    json_data = {'command': command, 'arg': value}
+    return await self.api.execute(json_data)
+
   async def set_prime_daily(self, enabled: bool) -> None:
     """
     Enable or disable daily priming for the Free Sleep Pod device.

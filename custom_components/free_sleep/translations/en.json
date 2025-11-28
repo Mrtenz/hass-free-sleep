@@ -106,6 +106,24 @@
     }
   },
   "services": {
+    "execute": {
+      "name": "Execute command",
+      "description": "Executes a command on the Free Sleep device. Note that this is a low-level operation and should be used with caution.",
+      "fields": {
+        "command": {
+          "name": "Command",
+          "description": "The command to execute on the Free Sleep device."
+        },
+        "pod": {
+          "name": "Pod",
+          "description": "The pod to execute the command on."
+        },
+        "value": {
+          "name": "Value",
+          "description": "The value to send with the command, if applicable."
+        }
+      }
+    },
     "set_schedule": {
       "name": "Set schedule",
       "description": "Sets the temperature schedule for the Free Sleep device, for the specified days and times.",

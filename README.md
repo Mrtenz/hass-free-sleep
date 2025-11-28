@@ -1,6 +1,6 @@
 # `hass-free-sleep`
 
-[![HACS Custom](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
+[![HACS Custom](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs) ![GitHub Release](https://img.shields.io/github/v/release/Mrtenz/hass-free-sleep)
 
 An unofficial Home Assistant custom integration for [Free Sleep](https://github.com/throwaway31265/free-sleep)
 devices.

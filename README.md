@@ -12,6 +12,25 @@ devices.
 >
 > Some functionality like vitals may not be accurate.
 
+## Table of Contents
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Overview](#overview)
+- [Features](#features)
+- [Installation](#installation)
+  - [Installation via HACS (Recommended)](#installation-via-hacs-recommended)
+  - [Manual Installation](#manual-installation)
+- [Configuration](#configuration)
+- [Services](#services)
+  - [`free_sleep.execute`](#free_sleepexecute)
+  - [`free_sleep.set_schedule`](#free_sleepset_schedule)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## Overview
+
 This integration allows you to control and monitor your Free Sleep device
 directly from Home Assistant. You can adjust bed settings, monitor sleep data,
 and view historical sleep information.

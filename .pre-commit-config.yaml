@@ -7,6 +7,14 @@ repos:
       - id: poetry-check
       - id: poetry-lock
 
+  - repo: https://github.com/thlorenz/doctoc
+    rev: v2.2.0
+    hooks:
+      - id: doctoc
+        args:
+          - --maxlevel=3
+          - --update-only
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:

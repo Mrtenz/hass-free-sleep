@@ -1,3 +1,26 @@
+execute:
+  fields:
+    pod:
+      required: true
+      selector:
+        device:
+          integration: free_sleep
+          multiple: false
+          entity:
+            domain: update
+
+    command:
+      required: true
+      example: SET_TEMP
+      selector:
+        text: {}
+
+    value:
+      required: false
+      example: 75
+      selector:
+        text: {}
+
 set_schedule:
   fields:
     side:

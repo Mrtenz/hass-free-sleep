@@ -12,6 +12,7 @@ from aiohttp import ClientResponse, ClientSession
 
 from .constants import (
   DEVICE_STATUS_ENDPOINT,
+  EXECUTE_ENDPOINT,
   JOBS_ENDPOINT,
   SCHEDULES_ENDPOINT,
   SERVER_INFO_URL,
@@ -211,6 +212,19 @@ class FreeSleepAPI:
     )
 
     await self.post(url, json_data)
+
+  async def execute(self, json_data: dict[str, Any]) -> dict[str, Any]:
+    """
+    Execute a command on the Free Sleep device.
+
+    :param json_data: The JSON data representing the command to execute.
+    """
+    url = f'{self.host}{EXECUTE_ENDPOINT}'
+    log.debug(
+      f'Executing command on device at "{url}" with data "{json_data}".'
+    )
+
+    return await self.post(url, json_data)
 
   async def run_jobs(self, jobs: list[str]) -> None:
     """

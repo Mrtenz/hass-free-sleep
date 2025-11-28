@@ -5,20 +5,57 @@ This module defines and registers services that allow users to interact
 with their Free Sleep Pod devices, such as setting sleep schedules.
 """
 
-from homeassistant.core import HomeAssistant, ServiceCall
+from homeassistant.core import (
+  HomeAssistant,
+  ServiceCall,
+  ServiceResponse,
+  SupportsResponse,
+)
 from homeassistant.helpers.device_registry import async_get
 from voluptuous import In, Optional, Or, Required, Schema
 
-from .constants import DAYS_OF_WEEK, DOMAIN, SET_SCHEDULE_SERVICE
+from .constants import (
+  DAYS_OF_WEEK,
+  DOMAIN,
+  EXECUTE_SERVICE,
+  SET_SCHEDULE_SERVICE,
+)
 from .utils import schedule_to_fahrenheit
 
 
-async def register_services(hass: HomeAssistant) -> None:
+async def register_services(hass: HomeAssistant) -> None:  # noqa: C901
   """
   Register services for the Free Sleep Pod integration.
 
   :param hass: The Home Assistant instance.
   """
+
+  async def handle_execute(call: ServiceCall) -> ServiceResponse | None:
+    """
+    Handle the service call to execute a command.
+
+    :param call: The service call data.
+    :raises ValueError: If the specified side device is not found.
+    """
+    registry = async_get(hass)
+
+    pod_id = call.data.get('pod')
+    command = call.data.get('command')
+    value = call.data.get('value', '')
+
+    pod = registry.async_get(pod_id)
+    if not pod:
+      message = f'Device for pod "{pod_id}" not found.'
+      raise ValueError(message)
+
+    for entity in hass.data[DOMAIN].values():
+      pod_instance, _ = entity
+      if pod_instance.device_info.get('identifiers') == pod.identifiers:
+        response = await pod_instance.execute_command(command, value)
+        if response and call.return_response:
+          return response
+
+    return None
 
   async def handle_set_schedule(call: ServiceCall) -> None:
     """
@@ -56,6 +93,20 @@ async def register_services(hass: HomeAssistant) -> None:
               schedule=schedule,
             )
             continue
+
+  hass.services.async_register(
+    DOMAIN,
+    EXECUTE_SERVICE,
+    handle_execute,
+    schema=Schema(
+      {
+        Required('pod'): str,
+        Required('command'): str,
+        Optional('value'): str,
+      }
+    ),
+    supports_response=SupportsResponse.OPTIONAL,
+  )
 
   hass.services.async_register(
     DOMAIN,

@@ -4,9 +4,11 @@ from typing import Final, Literal
 
 DOMAIN: Final = 'free_sleep'
 
+EXECUTE_SERVICE: Final = 'execute'
 SET_SCHEDULE_SERVICE: Final = 'set_schedule'
 
 DEVICE_STATUS_ENDPOINT: Final = '/api/deviceStatus'
+EXECUTE_ENDPOINT: Final = '/api/execute'
 JOBS_ENDPOINT: Final = '/api/jobs'
 SERVICES_ENDPOINT: Final = '/api/services'
 SETTINGS_ENDPOINT: Final = '/api/settings'

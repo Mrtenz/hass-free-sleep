@@ -66,3 +66,5 @@ set_schedule:
           duration: 1
           enabled: false
           alarmTemperature: 82
+      selector:
+        object: {}

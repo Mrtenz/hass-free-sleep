@@ -55,19 +55,12 @@ It creates three devices in Home Assistant:
 
 ### Installation via HACS (Recommended)
 
-Installation can be done via HACS (Home Assistant Community Store), by following
-these steps.
+Installation can be done via HACS (Home Assistant Community Store). The easiest
+way is to click the button below:
 
-#### 1. Add repository to HACS
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Mrtenz&repository=hass-free-sleep)
 
-1. Navigate to the HACS section in Home Assistant.
-2. Click on the three dots in the top right corner and select "Custom
-   repositories".
-3. Enter the repository URL: `https://github.com/Mrtenz/hass-free-sleep` and
-   select "Integration" as the category.
-4. Click "Add".
-
-#### 2. Install the integration
+Alternatively, you can follow these steps:
 
 1. Navigate to the HACS section in Home Assistant.
 2. Search for "Free Sleep" and click on it.
@@ -75,6 +68,8 @@ these steps.
 4. Restart Home Assistant.
 
 ### Manual Installation
+
+If you prefer to install the integration manually, follow these steps:
 
 1. Copy the contents of the `custom_components/free_sleep` directory from the
    repository to your Home Assistant's `custom_components/free_sleep` directory.

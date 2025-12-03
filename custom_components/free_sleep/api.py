@@ -5,6 +5,7 @@ This module provides the `FreeSleepAPI` class, which allows fetching device
 status and settings, as well as updating device configurations.
 """
 
+from asyncio import Lock
 from collections.abc import Mapping
 from typing import Any
 
@@ -29,6 +30,7 @@ class FreeSleepAPI:
 
   host: str
   session: ClientSession
+  _lock: Lock = Lock()
 
   def __init__(self, host: str, session: ClientSession) -> None:
     """
@@ -70,11 +72,11 @@ class FreeSleepAPI:
     :param params: Optional query parameters to include in the GET request.
     :return: A dictionary containing the JSON response.
     """
-    log.debug(f'GET {url}')
-
-    async with self.session.get(url, params=params, timeout=10) as response:
-      response.raise_for_status()
-      return await self.parse_response(response)
+    async with self._lock:
+      log.debug(f'GET {url}')
+      async with self.session.get(url, params=params, timeout=10) as response:
+        response.raise_for_status()
+        return await self.parse_response(response)
 
   async def post(
     self, url: str, json_data: dict[str, Any] | list[Any]
@@ -87,11 +89,11 @@ class FreeSleepAPI:
     :param json_data: The JSON data to include in the POST request.
     :return: A dictionary containing the JSON response, if any.
     """
-    log.debug(f'POST {url} with data "{json_data}".')
-
-    async with self.session.post(url, json=json_data, timeout=10) as response:
-      response.raise_for_status()
-      return await self.parse_response(response)
+    async with self._lock:
+      log.debug(f'POST {url} with data "{json_data}".')
+      async with self.session.post(url, json=json_data, timeout=10) as response:
+        response.raise_for_status()
+        return await self.parse_response(response)
 
   async def fetch_device_status(self) -> dict[str, Any]:
     """

@@ -5,21 +5,38 @@ This module provides pytest fixtures to create a FreeSleepAPI client and
 mock responses for device status, settings, etc.
 """
 
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, Callable, Generator
 from typing import Any
 
 import pytest
 from aiohttp import ClientSession
-from pytest_httpserver import HTTPServer
+from aioresponses import aioresponses
 
 from custom_components.free_sleep import FreeSleepAPI
 
 
 @pytest.fixture
-async def api(httpserver: HTTPServer) -> AsyncGenerator[FreeSleepAPI, Any]:
+def http() -> Generator[aioresponses, Any]:
+  """Fixture to mock `aiohttp` requests."""
+  with aioresponses() as mock:
+    yield mock
+
+
+@pytest.fixture
+def url() -> Callable[[str], str]:
+  """Fixture to generate full URLs for the API."""
+
+  def _url(path: str | None = '') -> str:
+    return f'http://example.com{path}'
+
+  return _url
+
+
+@pytest.fixture
+async def api(url: Callable[[str], str]) -> AsyncGenerator[FreeSleepAPI, Any]:
   """Fixture to create a FreeSleepAPI client."""
   async with ClientSession() as session:
-    yield FreeSleepAPI(host=httpserver.url_for('/'), session=session)
+    yield FreeSleepAPI(host=url(), session=session)
 
 
 @pytest.fixture

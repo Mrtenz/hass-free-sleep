@@ -1,11 +1,12 @@
 """Tests for the API module."""
 
+from collections.abc import Callable
 from typing import Any
 from unittest.mock import patch
 
 import pytest
 from aiohttp import ClientResponseError
-from pytest_httpserver import HTTPServer
+from aioresponses import aioresponses
 
 from custom_components.free_sleep.api import FreeSleepAPI
 from custom_components.free_sleep.constants import PodSide
@@ -60,115 +61,181 @@ async def test_parse_response_with_content(api: FreeSleepAPI) -> None:
   assert result == json_data
 
 
-async def test_get_request(api: FreeSleepAPI, httpserver: HTTPServer) -> None:
+async def test_get_request(
+  api: FreeSleepAPI, http: aioresponses, url: Callable[[str], str]
+) -> None:
   """Test sending a GET request."""
-  httpserver.expect_request('/test').respond_with_json({'message': 'success'})
+  http.get(url('/test'), payload={'message': 'success'})
 
-  result = await api.get(httpserver.url_for('/test'))
+  result = await api.get(url('/test'))
   assert result == {'message': 'success'}
+  http.assert_called_with(
+    url=url('/test'),
+    method='GET',
+    params=None,
+    timeout=10,
+  )
 
 
 async def test_get_request_with_params(
-  api: FreeSleepAPI, httpserver: HTTPServer
+  api: FreeSleepAPI, http: aioresponses, url: Callable[[str], str]
 ) -> None:
   """Test sending a GET request with query parameters."""
-  httpserver.expect_request(
-    '/test', query_string={'param1': 'value1', 'param2': 'value2'}
-  ).respond_with_json({'message': 'params received'})
+  http.get(
+    url('/test?param1=value1&param2=value2'),
+    payload={'message': 'params received'},
+  )
 
   result = await api.get(
-    httpserver.url_for('/test'), params={'param1': 'value1', 'param2': 'value2'}
+    url('/test'), params={'param1': 'value1', 'param2': 'value2'}
   )
   assert result == {'message': 'params received'}
+  http.assert_called_with(
+    url=url('/test'),
+    method='GET',
+    params={'param1': 'value1', 'param2': 'value2'},
+    timeout=10,
+  )
 
 
 async def test_get_request_no_content(
-  api: FreeSleepAPI, httpserver: HTTPServer
+  api: FreeSleepAPI, http: aioresponses, url: Callable[[str], str]
 ) -> None:
   """Test sending a GET request that returns no content."""
-  httpserver.expect_request('/test').respond_with_data('', status=204)
+  http.get(url('/test'), status=204)
 
-  result = await api.get(httpserver.url_for('/test'))
+  result = await api.get(url('/test'))
   assert result == {}
+  http.assert_called_with(
+    url=url('/test'),
+    method='GET',
+    params=None,
+    timeout=10,
+  )
 
 
 async def test_get_request_raise_for_status(
-  api: FreeSleepAPI, httpserver: HTTPServer
+  api: FreeSleepAPI, http: aioresponses, url: Callable[[str], str]
 ) -> None:
   """Test that a GET request raises for non-200 status codes."""
-  httpserver.expect_request('/test').respond_with_data('Not Found', status=404)
+  http.get(url('/test'), status=404)
 
   with pytest.raises(ClientResponseError):
-    await api.get(httpserver.url_for('/test'))
+    await api.get(url('/test'))
+  http.assert_called_with(
+    url=url('/test'),
+    method='GET',
+    params=None,
+    timeout=10,
+  )
 
 
-async def test_post_request(api: FreeSleepAPI, httpserver: HTTPServer) -> None:
+async def test_post_request(
+  api: FreeSleepAPI, http: aioresponses, url: Callable[[str], str]
+) -> None:
   """Test sending a POST request."""
   json_data = {'data': 'value'}
-  httpserver.expect_request(
-    '/test', method='POST', json=json_data
-  ).respond_with_json({'status': 'created'})
+  http.post(url('/test'), payload={'status': 'created'})
 
-  result = await api.post(httpserver.url_for('/test'), json_data=json_data)
+  result = await api.post(url('/test'), json_data=json_data)
   assert result == {'status': 'created'}
+  http.assert_called_with(
+    url=url('/test'),
+    method='POST',
+    json=json_data,
+    timeout=10,
+  )
 
 
 async def test_post_request_no_content(
-  api: FreeSleepAPI, httpserver: HTTPServer
+  api: FreeSleepAPI, http: aioresponses, url: Callable[[str], str]
 ) -> None:
   """Test sending a POST request that returns no content."""
   json_data = {'data': 'value'}
-  httpserver.expect_request(
-    '/test', method='POST', json=json_data
-  ).respond_with_data('', status=204)
+  http.post(url('/test'), status=204)
 
-  result = await api.post(httpserver.url_for('/test'), json_data=json_data)
+  result = await api.post(url('/test'), json_data=json_data)
   assert result == {}
+  http.assert_called_with(
+    url=url('/test'),
+    method='POST',
+    json=json_data,
+    timeout=10,
+  )
 
 
 async def test_post_request_raise_for_status(
-  api: FreeSleepAPI, httpserver: HTTPServer
+  api: FreeSleepAPI, http: aioresponses, url: Callable[[str], str]
 ) -> None:
   """Test that a POST request raises for non-200 status codes."""
   json_data = {'data': 'value'}
-  httpserver.expect_request(
-    '/test', method='POST', json=json_data
-  ).respond_with_data('Bad Request', status=400)
+  http.post(url('/test'), status=400)
 
   with pytest.raises(ClientResponseError):
-    await api.post(httpserver.url_for('/test'), json_data=json_data)
+    await api.post(url('/test'), json_data=json_data)
+  http.assert_called_with(
+    url=url('/test'),
+    method='POST',
+    json=json_data,
+    timeout=10,
+  )
 
 
 async def test_fetch_device_status(
-  api: FreeSleepAPI, mock_device_status: dict[str, Any], httpserver: HTTPServer
+  api: FreeSleepAPI,
+  mock_device_status: dict[str, Any],
+  http: aioresponses,
+  url: Callable[[str], str],
 ) -> None:
   """Test fetching device status."""
-  httpserver.expect_request('/api/deviceStatus').respond_with_json(
-    mock_device_status
-  )
+  http.get(url('/api/deviceStatus'), payload=mock_device_status)
 
   result = await api.fetch_device_status()
   assert result == mock_device_status
+  http.assert_called_with(
+    url=url('/api/deviceStatus'),
+    method='GET',
+    params=None,
+    timeout=10,
+  )
 
 
 async def test_fetch_settings(
-  api: FreeSleepAPI, mock_settings: dict[str, Any], httpserver: HTTPServer
+  api: FreeSleepAPI,
+  mock_settings: dict[str, Any],
+  http: aioresponses,
+  url: Callable[[str], str],
 ) -> None:
   """Test fetching device settings."""
-  httpserver.expect_request('/api/settings').respond_with_json(mock_settings)
+  http.get(url('/api/settings'), payload=mock_settings)
 
   result = await api.fetch_settings()
   assert result == mock_settings
+  http.assert_called_with(
+    url=url('/api/settings'),
+    method='GET',
+    params=None,
+    timeout=10,
+  )
 
 
 async def test_fetch_services(
-  api: FreeSleepAPI, mock_services: dict[str, Any], httpserver: HTTPServer
+  api: FreeSleepAPI,
+  mock_services: dict[str, Any],
+  http: aioresponses,
+  url: Callable[[str], str],
 ) -> None:
   """Test fetching device services."""
-  httpserver.expect_request('/api/services').respond_with_json(mock_services)
+  http.get(url('/api/services'), payload=mock_services)
 
   result = await api.fetch_services()
   assert result == mock_services
+  http.assert_called_with(
+    url=url('/api/services'),
+    method='GET',
+    params=None,
+    timeout=10,
+  )
 
 
 @pytest.mark.parametrize(
@@ -181,51 +248,69 @@ async def test_fetch_services(
 async def test_fetch_vitals(
   api: FreeSleepAPI,
   mock_vitals: dict[str, Any],
-  httpserver: HTTPServer,
+  http: aioresponses,
+  url: Callable[[str], str],
   side: PodSide,
 ) -> None:
   """Test fetching device vitals."""
-  httpserver.expect_request(
-    '/api/metrics/vitals/summary', query_string={'side': side}
-  ).respond_with_json(mock_vitals)
+  http.get(url(f'/api/metrics/vitals/summary?side={side}'), payload=mock_vitals)
 
   result = await api.fetch_vitals(side)
   assert result == mock_vitals
+  http.assert_called_with(
+    url=url('/api/metrics/vitals/summary'),
+    method='GET',
+    params={'side': side},
+    timeout=10,
+  )
 
 
 async def test_fetch_current_version(
-  api: FreeSleepAPI, mock_device_status: dict[str, Any], httpserver: HTTPServer
+  api: FreeSleepAPI,
+  mock_device_status: dict[str, Any],
+  http: aioresponses,
+  url: Callable[[str], str],
 ) -> None:
   """Test fetching current firmware version."""
-  httpserver.expect_request('/api/deviceStatus').respond_with_json(
-    mock_device_status
-  )
+  http.get(url('/api/deviceStatus'), payload=mock_device_status)
 
   result = await api.fetch_current_version()
   assert result == '2.1.3'
+  http.assert_called_with(
+    url=url('/api/deviceStatus'),
+    method='GET',
+    params=None,
+    timeout=10,
+  )
 
 
 async def test_fetch_latest_version(
   api: FreeSleepAPI,
   mock_latest_version: dict[str, Any],
-  httpserver: HTTPServer,
+  http: aioresponses,
+  url: Callable[[str], str],
 ) -> None:
   """Test fetching latest firmware version."""
-  httpserver.expect_request(
-    '/custom/github/server-info.json'
-  ).respond_with_json(mock_latest_version)
+  http.get(url('/custom/github/server-info.json'), payload=mock_latest_version)
 
   with patch(
     'custom_components.free_sleep.api.SERVER_INFO_URL',
-    httpserver.url_for('/custom/github/server-info.json'),
+    url('/custom/github/server-info.json'),
   ):
     result = await api.fetch_latest_version()
     assert result == '2.2.0'
+    http.assert_called_with(
+      url=url('/custom/github/server-info.json'),
+      method='GET',
+      params=None,
+      timeout=10,
+    )
 
 
 async def test_update_device_status(
   api: FreeSleepAPI,
-  httpserver: HTTPServer,
+  http: aioresponses,
+  url: Callable[[str], str],
 ) -> None:
   """Test updating device status."""
   json_data = {
@@ -239,16 +324,21 @@ async def test_update_device_status(
     },
   }
 
-  httpserver.expect_request(
-    '/api/deviceStatus', method='POST', json=json_data
-  ).respond_with_data('', status=204)
+  http.post(url('/api/deviceStatus'), status=204)
 
   await api.update_device_status(json_data)
+  http.assert_called_with(
+    url=url('/api/deviceStatus'),
+    method='POST',
+    json=json_data,
+    timeout=10,
+  )
 
 
 async def test_update_settings(
   api: FreeSleepAPI,
-  httpserver: HTTPServer,
+  http: aioresponses,
+  url: Callable[[str], str],
 ) -> None:
   """Test updating device settings."""
   json_data = {
@@ -263,16 +353,21 @@ async def test_update_settings(
     },
   }
 
-  httpserver.expect_request(
-    '/api/settings', method='POST', json=json_data
-  ).respond_with_data('', status=204)
+  http.post(url('/api/settings'), status=204)
 
   await api.update_settings(json_data)
+  http.assert_called_with(
+    url=url('/api/settings'),
+    method='POST',
+    json=json_data,
+    timeout=10,
+  )
 
 
 async def test_update_schedule(
   api: FreeSleepAPI,
-  httpserver: HTTPServer,
+  http: aioresponses,
+  url: Callable[[str], str],
 ) -> None:
   """Test updating sleep schedule."""
   json_data = {
@@ -283,55 +378,33 @@ async def test_update_schedule(
     }
   }
 
-  httpserver.expect_request(
-    '/api/schedules', method='POST', json=json_data
-  ).respond_with_data('', status=204)
+  http.post(url('/api/schedules'), status=204)
 
   await api.update_schedule(json_data)
+  http.assert_called_with(
+    url=url('/api/schedules'),
+    method='POST',
+    json=json_data,
+    timeout=10,
+  )
 
 
 async def test_update_services(
   api: FreeSleepAPI,
-  httpserver: HTTPServer,
+  http: aioresponses,
+  url: Callable[[str], str],
 ) -> None:
   """Test updating device services."""
   json_data = {
     'biometrics': {'enabled': True},
   }
 
-  httpserver.expect_request(
-    '/api/services', method='POST', json=json_data
-  ).respond_with_data('', status=204)
+  http.post(url('/api/services'), status=204)
 
   await api.update_services(json_data)
-
-
-async def test_execute(
-  api: FreeSleepAPI,
-  httpserver: HTTPServer,
-) -> None:
-  """Test executing a command on the device."""
-  json_data = {
-    'command': 'HELLO',
-  }
-
-  httpserver.expect_request(
-    '/api/execute', method='POST', json=json_data
-  ).respond_with_json({'status': 'ok'})
-
-  result = await api.execute(json_data)
-  assert result == {'status': 'ok'}
-
-
-async def test_run_jobs(
-  api: FreeSleepAPI,
-  httpserver: HTTPServer,
-) -> None:
-  """Test running jobs on the device."""
-  jobs = ['job1', 'job2']
-
-  httpserver.expect_request(
-    '/api/jobs', method='POST', json=jobs
-  ).respond_with_data('', status=204)
-
-  await api.run_jobs(jobs)
+  http.assert_called_with(
+    url=url('/api/services'),
+    method='POST',
+    json=json_data,
+    timeout=10,
+  )

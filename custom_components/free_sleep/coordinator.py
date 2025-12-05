@@ -9,6 +9,7 @@ from logging import Logger
 from typing import Any, TypedDict
 
 from aiohttp import ClientError
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import (
   DataUpdateCoordinator,
@@ -40,7 +41,11 @@ class FreeSleepCoordinator(DataUpdateCoordinator[PodState]):
   """A class that coordinates data updates for a Free Sleep Pod device."""
 
   def __init__(
-    self, hass: HomeAssistant, log: Logger, api: FreeSleepAPI
+    self,
+    hass: HomeAssistant,
+    log: Logger,
+    api: FreeSleepAPI,
+    config_entry: ConfigEntry = None,
   ) -> None:
     """
     Initialize the Free Sleep Coordinator.
@@ -54,6 +59,7 @@ class FreeSleepCoordinator(DataUpdateCoordinator[PodState]):
       name='Free Sleep Coordinator',
       update_method=self._async_update_data,
       update_interval=timedelta(seconds=30),
+      config_entry=config_entry,
     )
 
     self.api = api

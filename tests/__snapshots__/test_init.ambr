@@ -1,0 +1,17 @@
+# serializer version: 1
+# name: test_async_setup_register_services
+  dict({
+    'execute': dict({
+      'name': 'service free_sleep.execute',
+      'schema': "{'pod': <class 'str'>, 'command': <class 'str'>, 'value': <class 'str'>}",
+      'supports_response': <SupportsResponse.OPTIONAL: 'optional'>,
+      'type': <HassJobType.Coroutinefunction: 1>,
+    }),
+    'set_schedule': dict({
+      'name': 'service free_sleep.set_schedule',
+      'schema': "{'side': Any(<class 'str'>, [<class 'str'>], msg=None), 'day_of_week': Any(In(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']), [In(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])], msg=None), 'schedule': <class 'dict'>}",
+      'supports_response': <SupportsResponse.NONE: 'none'>,
+      'type': <HassJobType.Coroutinefunction: 1>,
+    }),
+  })
+# ---

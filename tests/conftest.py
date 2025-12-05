@@ -199,3 +199,22 @@ def mock_vitals() -> dict[str, Any]:
 def mock_latest_version() -> dict[str, Any]:
   """Fixture to provide a mock latest firmware version response."""
   return {'version': '2.2.0', 'branch': 'main'}
+
+
+@pytest.fixture
+def mock_coordinator_data(
+  mock_device_status: dict[str, Any],
+  mock_settings: dict[str, Any],
+  mock_services: dict[str, Any],
+  mock_vitals: dict[str, Any],
+) -> dict[str, Any]:
+  """Fixture to provide mock coordinator data."""
+  return {
+    'services': mock_services,
+    'settings': mock_settings,
+    'status': mock_device_status,
+    'vitals': {
+      'left': mock_vitals,
+      'right': mock_vitals,
+    },
+  }

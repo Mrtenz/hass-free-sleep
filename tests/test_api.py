@@ -408,3 +408,44 @@ async def test_update_services(
     json=json_data,
     timeout=10,
   )
+
+
+async def test_execute(
+  http: aioresponses,
+  url: Callable[[str], str],
+  api: FreeSleepAPI,
+) -> None:
+  """Test executing a command on the device."""
+  json_data = {
+    'command': 'HELLO',
+  }
+
+  http.post(url('/api/execute'), payload={'status': 'ok'})
+
+  result = await api.execute(json_data)
+  assert result == {'status': 'ok'}
+  http.assert_called_with(
+    url=url('/api/execute'),
+    method='POST',
+    json=json_data,
+    timeout=10,
+  )
+
+
+async def test_run_jobs(
+  http: aioresponses,
+  url: Callable[[str], str],
+  api: FreeSleepAPI,
+) -> None:
+  """Test running jobs on the device."""
+  jobs = ['job1', 'job2']
+
+  http.post(url('/api/jobs'), status=204)
+
+  await api.run_jobs(jobs)
+  http.assert_called_with(
+    url=url('/api/jobs'),
+    method='POST',
+    json=jobs,
+    timeout=10,
+  )

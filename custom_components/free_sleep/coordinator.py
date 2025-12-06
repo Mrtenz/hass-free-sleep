@@ -90,7 +90,7 @@ class FreeSleepCoordinator(DataUpdateCoordinator[PodState]):
       raise UpdateFailed from error
     except ClientError as error:
       log.error(
-        f'Client error while fetching data from device at "{self.api.host}":'
+        f'Client error while fetching data from device at "{self.api.host}": '
         f'{error}'
       )
       raise UpdateFailed from error

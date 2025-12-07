@@ -1,3 +1,7 @@
 .cache
 .poetry
 __pycache__
+
+# Pytest
+.coverage
+coverage.xml

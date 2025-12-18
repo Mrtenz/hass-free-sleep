@@ -196,6 +196,21 @@ def mock_vitals() -> dict[str, Any]:
 
 
 @pytest.fixture
+def mock_presence() -> dict[str, Any]:
+  """Fixture to provide a mock presence response."""
+  return {
+    'left': {
+      'present': True,
+      'lastUpdatedAt': '2025-12-18T13:59:59-06:00',
+    },
+    'right': {
+      'present': False,
+      'lastUpdatedAt': '2025-12-18T13:59:59-06:00',
+    },
+  }
+
+
+@pytest.fixture
 def mock_latest_version() -> dict[str, Any]:
   """Fixture to provide a mock latest firmware version response."""
   return {'version': '2.2.0', 'branch': 'main'}
@@ -207,6 +222,7 @@ def mock_coordinator_data(
   mock_settings: dict[str, Any],
   mock_services: dict[str, Any],
   mock_vitals: dict[str, Any],
+  mock_presence: dict[str, Any],
 ) -> dict[str, Any]:
   """Fixture to provide mock coordinator data."""
   return {
@@ -216,5 +232,9 @@ def mock_coordinator_data(
     'vitals': {
       'left': mock_vitals,
       'right': mock_vitals,
+    },
+    'presence': {
+      'left': mock_presence['left'],
+      'right': mock_presence['right'],
     },
   }

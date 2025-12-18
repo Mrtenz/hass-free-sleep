@@ -265,6 +265,25 @@ async def test_fetch_vitals(
   )
 
 
+async def test_fetch_presence(
+  api: FreeSleepAPI,
+  mock_presence: dict[str, Any],
+  http: aioresponses,
+  url: Callable[[str], str],
+) -> None:
+  """Test fetching presence data."""
+  http.get(url('/api/metrics/presence'), payload=mock_presence)
+
+  result = await api.fetch_presence()
+  assert result == mock_presence
+  http.assert_called_with(
+    url=url('/api/metrics/presence'),
+    method='GET',
+    params=None,
+    timeout=10,
+  )
+
+
 async def test_fetch_current_version(
   api: FreeSleepAPI,
   mock_device_status: dict[str, Any],

@@ -5,9 +5,11 @@ This module is loaded automatically by Home Assistant to set up update entities
 for the Free Sleep Pod integration.
 """
 
-from typing import Any
-
-from homeassistant.components.update import UpdateEntity, UpdateEntityFeature
+from homeassistant.components.update import (
+  UpdateDeviceClass,
+  UpdateEntity,
+  UpdateEntityFeature,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -70,6 +72,15 @@ class FreeSleepUpdate(CoordinatorEntity, UpdateEntity):
     return self.pod.device_info
 
   @property
+  def device_class(self) -> UpdateDeviceClass:
+    """
+    Return the device class for the update entity.
+
+    :return: The device class.
+    """
+    return UpdateDeviceClass.FIRMWARE
+
+  @property
   def installed_version(self) -> str | None:
     """
     Return the currently installed firmware version.
@@ -87,6 +98,11 @@ class FreeSleepUpdate(CoordinatorEntity, UpdateEntity):
     """
     return self.coordinator.data.get('latest_version')
 
-  async def async_install(self, **_kwargs: dict[str, Any]) -> None:
+  async def async_install(
+    self,
+    version: str | None,  # noqa: ARG002
+    backup: bool,  # noqa: ARG002
+    **kwargs: dict[str, str],  # noqa: ARG002
+  ) -> None:
     """Install the latest firmware update."""
     await self.pod.api.run_jobs(['update'])

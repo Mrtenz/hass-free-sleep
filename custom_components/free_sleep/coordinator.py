@@ -82,7 +82,8 @@ class FreeSleepCoordinator(DataUpdateCoordinator[PodState]):
     ]
 
     try:
-      status, settings, vitals_left, vitals_right, services, presence = await gather(
+      status, settings, vitals_left, vitals_right, services, presence = await \
+      gather(
         *requests
       )
     except TimeoutError as error:
@@ -108,7 +109,8 @@ class FreeSleepCoordinator(DataUpdateCoordinator[PodState]):
       settings=settings,
       status=status,
       vitals={'left': vitals_left, 'right': vitals_right},
-      presence={'left': presence.get('left', {}), 'right': presence.get('right', {})},
+      presence={'left': presence.get('left', {}), 'right':
+                presence.get('right', {})},
     )
 
 

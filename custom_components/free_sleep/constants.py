@@ -33,3 +33,5 @@ DAYS_OF_WEEK: Final = [
   'saturday',
   'sunday',
 ]
+
+CONF_UPDATE_INTERVAL: Final = 'update_interval'

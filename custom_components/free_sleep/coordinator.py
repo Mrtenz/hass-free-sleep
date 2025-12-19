@@ -46,6 +46,7 @@ class FreeSleepCoordinator(DataUpdateCoordinator[PodState]):
     hass: HomeAssistant,
     log: Logger,
     api: FreeSleepAPI,
+    update_interval: int = 30,
     config_entry: ConfigEntry = None,
   ) -> None:
     """
@@ -59,7 +60,7 @@ class FreeSleepCoordinator(DataUpdateCoordinator[PodState]):
       log,
       name='Free Sleep Coordinator',
       update_method=self._async_update_data,
-      update_interval=timedelta(seconds=30),
+      update_interval=timedelta(seconds=update_interval),
       config_entry=config_entry,
     )
 

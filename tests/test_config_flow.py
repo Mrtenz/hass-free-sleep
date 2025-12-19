@@ -156,7 +156,39 @@ async def test_config_flow(
 
   assert result['type'] == FlowResultType.CREATE_ENTRY
   assert result['title'] == '1.2.3'
-  assert result['data'] == {'host': url()}
+  assert result['data'] == {'host': url(), 'update_interval': 30}
+
+
+async def test_config_flow_custom_update_interval(
+  hass: HomeAssistant,
+  url: Callable[[str], str],
+  http: aioresponses,
+  enable_custom_integrations: None,  # noqa: ARG001
+) -> None:
+  """Test the config flow."""
+  result = await hass.config_entries.flow.async_init(
+    DOMAIN, context={'source': SOURCE_USER}
+  )
+
+  assert result['type'] == FlowResultType.FORM
+  assert result['step_id'] == 'user'
+
+  http.get(
+    url(DEVICE_STATUS_ENDPOINT),
+    payload={
+      'hubVersion': '1.2.3',
+    },
+    repeat=True,
+  )
+
+  result = await hass.config_entries.flow.async_configure(
+    result['flow_id'],
+    {'host': url(), 'update_interval': 45},
+  )
+
+  assert result['type'] == FlowResultType.CREATE_ENTRY
+  assert result['title'] == '1.2.3'
+  assert result['data'] == {'host': url(), 'update_interval': 45}
 
 
 async def test_config_flow_failure(

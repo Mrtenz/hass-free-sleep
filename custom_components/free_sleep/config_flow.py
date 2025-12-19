@@ -14,7 +14,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import FreeSleepAPI
-from .constants import DOMAIN
+from .constants import CONF_UPDATE_INTERVAL, DOMAIN
 from .logger import log
 
 HOST_SCHEMA = voluptuous.Schema(
@@ -22,6 +22,10 @@ HOST_SCHEMA = voluptuous.Schema(
     voluptuous.Required(
       CONF_HOST,
     ): str,
+    voluptuous.Optional(
+      CONF_UPDATE_INTERVAL,
+      default=30,
+    ): voluptuous.All(voluptuous.Coerce(int), voluptuous.Range(min=5, max=300)),
   }
 )
 

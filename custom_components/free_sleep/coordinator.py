@@ -28,6 +28,7 @@ class PodState(TypedDict):
   settings: dict[str, Any]
   status: dict[str, Any]
   vitals: dict[PodSide, Any]
+  presence: dict[PodSide, Any]
 
 
 class FirmwareState(TypedDict):
@@ -77,12 +78,18 @@ class FreeSleepCoordinator(DataUpdateCoordinator[PodState]):
       self.api.fetch_vitals('left'),
       self.api.fetch_vitals('right'),
       self.api.fetch_services(),
+      self.api.fetch_presence(),
     ]
 
     try:
-      status, settings, vitals_left, vitals_right, services = await gather(
-        *requests
-      )
+      (
+        status,
+        settings,
+        vitals_left,
+        vitals_right,
+        services,
+        presence,
+      ) = await gather(*requests)
     except TimeoutError as error:
       log.error(
         f'Timeout while fetching data from device at "{self.api.host}".'
@@ -106,6 +113,10 @@ class FreeSleepCoordinator(DataUpdateCoordinator[PodState]):
       settings=settings,
       status=status,
       vitals={'left': vitals_left, 'right': vitals_right},
+      presence={
+        'left': presence.get('left', {}),
+        'right': presence.get('right', {}),
+      },
     )
 
 

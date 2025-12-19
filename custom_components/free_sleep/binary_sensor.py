@@ -23,7 +23,7 @@ from homeassistant.helpers.update_coordinator import (
 from sensor_state_data import BinarySensorDeviceClass
 
 from .constants import DOMAIN
-from .pod import Pod
+from .pod import Pod, Side
 
 
 @dataclass(frozen=True)
@@ -58,6 +58,29 @@ POD_BINARY_SENSORS: tuple[FreeSleepBinarySensorDescription, ...] = (
 )
 
 
+@dataclass(frozen=True)
+class FreeSleepSideBinarySensorDescription(BinarySensorEntityDescription):
+  """A class that describes Free Sleep Pod side binary sensor entities."""
+
+  icon_on: str | None = None
+  icon_off: str | None = None
+
+  get_value: Callable[[dict[str, Any]], bool] | None = None
+
+
+POD_SIDE_BINARY_SENSORS: tuple[FreeSleepSideBinarySensorDescription, ...] = (
+  FreeSleepSideBinarySensorDescription(
+    name='Bed Presence',
+    key='bed_presence',
+    translation_key='bed_presence',
+    device_class=BinarySensorDeviceClass.OCCUPANCY,
+    icon_on='mdi:bed',
+    icon_off='mdi:bed-empty',
+    get_value=lambda data: data['presence']['present'],
+  ),
+)
+
+
 async def async_setup_entry(
   hass: HomeAssistant,
   entry: ConfigEntry,
@@ -77,6 +100,14 @@ async def async_setup_entry(
   ]
 
   async_add_entities(binary_sensors, update_before_add=True)
+
+  for side in pod.sides:
+    side_binary_sensors = [
+      FreeSleepSideBinarySensor(coordinator, pod, side, description)
+      for description in POD_SIDE_BINARY_SENSORS
+    ]
+
+    async_add_entities(side_binary_sensors, update_before_add=True)
 
 
 class FreeSleepBinarySensor(CoordinatorEntity, BinarySensorEntity):
@@ -125,6 +156,73 @@ class FreeSleepBinarySensor(CoordinatorEntity, BinarySensorEntity):
     """
     if self.entity_description.get_value:
       return self.entity_description.get_value(self.coordinator.data)
+
+    return None
+
+  @property
+  def icon(self) -> str | None:
+    """
+    Get the icon for the binary sensor based on its state.
+
+    :return: The icon string.
+    """
+    if self.is_on and self.entity_description.icon_on:
+      return self.entity_description.icon_on
+    if not self.is_on and self.entity_description.icon_off:
+      return self.entity_description.icon_off
+    return super().icon
+
+
+class FreeSleepSideBinarySensor(CoordinatorEntity, BinarySensorEntity):
+  """A class that represents a binary sensor for a Free Sleep Pod side."""
+
+  entity_description: FreeSleepSideBinarySensorDescription
+
+  _attr_has_entity_name = True
+
+  def __init__(
+    self,
+    coordinator: DataUpdateCoordinator,
+    pod: Pod,
+    side: Side,
+    description: FreeSleepSideBinarySensorDescription,
+  ) -> None:
+    """
+    Initialize the Free Sleep side binary sensor entity.
+
+    :param coordinator: The data update coordinator.
+    :param pod: The Free Sleep Pod instance.
+    :param side: The side of the pod (left or right).
+    :param description: The entity description.
+    """
+    super().__init__(coordinator)
+
+    self.pod = pod
+    self.side = side
+    self.entity_description = description
+    self._attr_name = description.name
+    self._attr_unique_id = f'{side.id}_{description.key}'
+
+  @property
+  def device_info(self) -> dict:
+    """
+    Return device information for the Free Sleep Pod. This is used by Home
+    Assistant to group entities under a single device.
+
+    :return: A dictionary containing device information.
+    """
+    return self.side.device_info
+
+  @property
+  def is_on(self) -> bool | None:
+    """
+    Get whether the binary sensor is on.
+
+    :return: True if the sensor is on, False otherwise.
+    """
+    if self.entity_description.get_value:
+      data = self.side.get_side_data(self.coordinator.data)
+      return self.entity_description.get_value(data)
 
     return None
 

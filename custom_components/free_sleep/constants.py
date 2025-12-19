@@ -14,6 +14,7 @@ SERVICES_ENDPOINT: Final = '/api/services'
 SETTINGS_ENDPOINT: Final = '/api/settings'
 SCHEDULES_ENDPOINT: Final = '/api/schedules'
 VITALS_SUMMARY_ENDPOINT: Final = '/api/metrics/vitals/summary'
+PRESENCE_ENDPOINT: Final = '/api/metrics/presence'
 
 SERVER_INFO_URL: Final = 'https://raw.githubusercontent.com/throwaway31265/free-sleep/refs/heads/main/server/src/serverInfo.json'
 

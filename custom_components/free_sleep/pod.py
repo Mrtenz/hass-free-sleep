@@ -197,6 +197,7 @@ class Side:
       'status': data['status'][self.type],
       'settings': data['settings'][self.type],
       'vitals': data['vitals'][self.type],
+      'presence': data['presence'][self.type],
     }
 
   async def set_active(self, active: bool) -> None:

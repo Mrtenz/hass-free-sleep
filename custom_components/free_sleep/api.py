@@ -15,6 +15,7 @@ from .constants import (
   DEVICE_STATUS_ENDPOINT,
   EXECUTE_ENDPOINT,
   JOBS_ENDPOINT,
+  PRESENCE_ENDPOINT,
   SCHEDULES_ENDPOINT,
   SERVER_INFO_URL,
   SERVICES_ENDPOINT,
@@ -139,6 +140,17 @@ class FreeSleepAPI:
     log.debug(f'Fetching vitals for side "{side}" from device at "{url}".')
 
     return await self.get(url, params={'side': side})
+
+  async def fetch_presence(self) -> dict[str, Any]:
+    """
+    Fetch the current presence data for both sides of the Free Sleep device.
+
+    :return: A dictionary containing presence data for left and right sides.
+    """
+    url = f'{self.host}{PRESENCE_ENDPOINT}'
+    log.debug(f'Fetching presence data from device at "{url}".')
+
+    return await self.get(url)
 
   async def fetch_current_version(self) -> str | None:
     """

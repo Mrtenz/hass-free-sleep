@@ -57,11 +57,13 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           use_oidc: true
+          report_type: coverage
       - name: Upload test results
         if: ${{ !cancelled() }}
-        uses: codecov/test-results-action@v1
+        uses: codecov/codecov-action@v5
         with:
           use_oidc: true
+          report_type: test_results
 
   lint:
     name: Lint

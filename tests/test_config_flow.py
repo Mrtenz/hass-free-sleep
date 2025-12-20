@@ -6,11 +6,13 @@ from unittest.mock import patch
 
 import pytest
 from aioresponses import aioresponses
-from homeassistant.config_entries import SOURCE_USER
+from homeassistant.config_entries import SOURCE_RECONFIGURE, SOURCE_USER
 from homeassistant.const import CONF_HOST
 from homeassistant.core import HomeAssistant
-from homeassistant.data_entry_flow import FlowResultType
+from homeassistant.data_entry_flow import FlowResultType, InvalidData
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
+from custom_components.free_sleep import CONF_UPDATE_INTERVAL
 from custom_components.free_sleep.config_flow import (
   validate_connection,
   validate_setup,
@@ -237,3 +239,85 @@ async def test_config_flow_invalid_param(
   assert result['type'] == FlowResultType.FORM
   assert result['step_id'] == 'user'
   assert result['errors'] == {CONF_HOST: 'invalid_url'}
+
+
+async def test_reconfigure_flow(
+  hass: HomeAssistant,
+  url: Callable[[str], str],
+  http: aioresponses,
+  enable_custom_integrations: None,  # noqa: ARG001
+) -> None:
+  """Test the reconfiguration flow."""
+  entry = MockConfigEntry(
+    domain=DOMAIN,
+    data={
+      CONF_HOST: url(),
+      CONF_UPDATE_INTERVAL: 30,
+    },
+    entry_id='test',
+    version=0,
+  )
+  entry.add_to_hass(hass)
+
+  http.get(
+    url(DEVICE_STATUS_ENDPOINT),
+    payload={
+      'hubVersion': '1.2.3',
+    },
+    repeat=True,
+  )
+
+  result = await hass.config_entries.flow.async_init(
+    DOMAIN, context={'source': SOURCE_RECONFIGURE, 'entry_id': entry.entry_id}
+  )
+
+  assert result['type'] == FlowResultType.FORM
+  assert result['step_id'] == 'reconfigure'
+
+  result = await hass.config_entries.flow.async_configure(
+    result['flow_id'],
+    {'host': url(), 'update_interval': 60},
+  )
+
+  assert result['type'] == FlowResultType.ABORT
+  assert result['reason'] == 'reconfigure_successful'
+
+
+async def test_reconfigure_flow_invalid_param(
+  hass: HomeAssistant,
+  url: Callable[[str], str],
+  enable_custom_integrations: None,  # noqa: ARG001
+) -> None:
+  """Test the reconfiguration flow for invalid URL parameter."""
+  entry = MockConfigEntry(
+    domain=DOMAIN,
+    data={
+      CONF_HOST: 'http://example.com',
+      CONF_UPDATE_INTERVAL: 30,
+    },
+    entry_id='test',
+    version=0,
+  )
+  entry.add_to_hass(hass)
+
+  result = await hass.config_entries.flow.async_init(
+    DOMAIN, context={'source': SOURCE_RECONFIGURE, 'entry_id': entry.entry_id}
+  )
+
+  assert result['type'] == FlowResultType.FORM
+  assert result['step_id'] == 'reconfigure'
+
+  result = await hass.config_entries.flow.async_configure(
+    result['flow_id'],
+    {'host': 'invalid_url', 'update_interval': 60},
+  )
+
+  assert result['type'] == FlowResultType.FORM
+  assert result['step_id'] == 'reconfigure'
+  assert result['errors'] == {CONF_HOST: 'invalid_url'}
+
+  with pytest.raises(InvalidData):
+    await hass.config_entries.flow.async_configure(
+      result['flow_id'],
+      {'host': url(), 'update_interval': 'foo'},
+    )

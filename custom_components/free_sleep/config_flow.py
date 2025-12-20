@@ -17,7 +17,7 @@ from .api import FreeSleepAPI
 from .constants import CONF_UPDATE_INTERVAL, DOMAIN
 from .logger import log
 
-HOST_SCHEMA = voluptuous.Schema(
+CONFIG_SCHEMA = voluptuous.Schema(
   {
     voluptuous.Required(
       CONF_HOST,
@@ -97,5 +97,38 @@ class FreeSleepConfigFlow(ConfigFlow, domain=DOMAIN):
         )
 
     return self.async_show_form(
-      step_id='user', data_schema=HOST_SCHEMA, errors=errors
+      step_id='user', data_schema=CONFIG_SCHEMA, errors=errors
+    )
+
+  async def async_step_reconfigure(
+    self, user_input: dict[str, Any] | None = None
+  ) -> ConfigFlowResult:
+    """
+    Initiate the integration reconfig flow.
+
+    This is invoked when the user starts the reconfiguration process for the
+    Free Sleep Pod integration from the Home Assistant UI.
+    """
+    errors: dict[str, str] = {}
+    reconfigure_entry = self._get_reconfigure_entry()
+
+    if user_input is not None:
+      try:
+        name, data = await validate_setup(user_input, self.hass)
+      except ValueError as error:
+        errors[CONF_HOST] = str(error)
+
+      if not errors:
+        return self.async_update_reload_and_abort(
+          reconfigure_entry,
+          title=name,
+          data_updates=data,
+        )
+
+    return self.async_show_form(
+      step_id='reconfigure',
+      data_schema=self.add_suggested_values_to_schema(
+        CONFIG_SCHEMA, user_input or reconfigure_entry.data
+      ),
+      errors=errors,
     )

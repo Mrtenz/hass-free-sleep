@@ -70,9 +70,9 @@ class FreeSleepSideBinarySensorDescription(BinarySensorEntityDescription):
 
 POD_SIDE_BINARY_SENSORS: tuple[FreeSleepSideBinarySensorDescription, ...] = (
   FreeSleepSideBinarySensorDescription(
-    name='Bed Presence',
+    name='Presence',
     key='bed_presence',
-    translation_key='bed_presence',
+    translation_key='presence',
     device_class=BinarySensorDeviceClass.OCCUPANCY,
     icon_on='mdi:bed',
     icon_off='mdi:bed-empty',

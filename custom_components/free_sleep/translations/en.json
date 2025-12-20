@@ -25,6 +25,9 @@
   },
   "entity": {
     "binary_sensor": {
+      "presence": {
+        "name": "Presence"
+      },
       "priming": {
         "name": "Priming"
       },

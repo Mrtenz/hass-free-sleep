@@ -4,6 +4,9 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.config_validation import (
+  config_entry_only_config_schema,
+)
 from homeassistant.helpers.typing import ConfigType
 
 from .api import FreeSleepAPI
@@ -12,6 +15,10 @@ from .coordinator import FreeSleepCoordinator
 from .logger import log
 from .pod import Pod
 from .services import register_services
+
+# This tells Home Assistant that the integration can only be set up via config
+# entries (i.e., through the UI) and not through YAML configuration.
+CONFIG_SCHEMA = config_entry_only_config_schema(DOMAIN)
 
 PLATFORMS: list[Platform] = [
   Platform.BINARY_SENSOR,

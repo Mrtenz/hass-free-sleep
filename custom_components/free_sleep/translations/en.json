@@ -1,5 +1,8 @@
 {
   "config": {
+    "abort": {
+      "reconfigure_successful": "The Free Sleep integration has been successfully reconfigured."
+    },
     "error": {
       "cannot_connect": "Unable to connect to the Free Sleep device. Please check the URL and ensure the device is reachable.",
       "invalid_url": "The host URL must start with `http://` or `https://`."
@@ -7,7 +10,7 @@
     "step": {
       "reconfigure": {
         "title": "Reconfigure Free Sleep",
-        "description": "Enter the URL of your Free Sleep device, including the protocol and port (e.g., http://10.0.0.5:3000).",
+        "description": "Enter the URL of your Free Sleep device, including the protocol and port (e.g., http://10.0.0.5:3000). Optionally, you can adjust the update interval (in seconds).",
         "data": {
           "host": "Host URL",
           "update_interval": "Update interval (seconds, optional)"
@@ -15,7 +18,7 @@
       },
       "user": {
         "title": "Configure Free Sleep",
-        "description": "Enter the URL of your Free Sleep device, including the protocol and port (e.g., http://10.0.0.5:3000).",
+        "description": "Enter the URL of your Free Sleep device, including the protocol and port (e.g., http://10.0.0.5:3000). Optionally, you can adjust the update interval (in seconds).",
         "data": {
           "host": "Host URL",
           "update_interval": "Update interval (seconds, optional)"

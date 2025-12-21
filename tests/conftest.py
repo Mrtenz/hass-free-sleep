@@ -270,7 +270,7 @@ def mock_coordinator_data(
 
 
 @pytest.fixture
-async def mock_config_entry(
+def mock_config_entry(
   url: Callable[[str], str],
 ) -> ConfigEntry[dict[str, Any]]:
   """Fixture to provide a mock config entry."""

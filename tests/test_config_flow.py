@@ -24,16 +24,6 @@ from custom_components.free_sleep.constants import (
 
 
 @pytest.fixture(autouse=True)
-def configure_logging(caplog: pytest.LogCaptureFixture) -> None:
-  """
-  Configure logging for the tests to only show errors by default.
-
-  Behaviour can be overridden in individual tests using the `caplog` fixture.
-  """
-  caplog.set_level(logging.ERROR)
-
-
-@pytest.fixture(autouse=True)
 def skip_setup() -> Generator[None]:
   """Skip setup of the integration."""
   with (
@@ -133,7 +123,6 @@ async def test_config_flow(
   hass: HomeAssistant,
   url: Callable[[str], str],
   http: aioresponses,
-  enable_custom_integrations: None,  # noqa: ARG001
 ) -> None:
   """Test the config flow."""
   result = await hass.config_entries.flow.async_init(
@@ -165,7 +154,6 @@ async def test_config_flow_custom_update_interval(
   hass: HomeAssistant,
   url: Callable[[str], str],
   http: aioresponses,
-  enable_custom_integrations: None,  # noqa: ARG001
 ) -> None:
   """Test the config flow."""
   result = await hass.config_entries.flow.async_init(
@@ -197,7 +185,6 @@ async def test_config_flow_failure(
   hass: HomeAssistant,
   url: Callable[[str], str],
   http: aioresponses,
-  enable_custom_integrations: None,  # noqa: ARG001
 ) -> None:
   """Test the config flow for connection failure."""
   result = await hass.config_entries.flow.async_init(
@@ -221,7 +208,6 @@ async def test_config_flow_failure(
 
 async def test_config_flow_invalid_param(
   hass: HomeAssistant,
-  enable_custom_integrations: None,  # noqa: ARG001
 ) -> None:
   """Test the config flow for invalid URL parameter."""
   result = await hass.config_entries.flow.async_init(
@@ -245,7 +231,6 @@ async def test_reconfigure_flow(
   hass: HomeAssistant,
   url: Callable[[str], str],
   http: aioresponses,
-  enable_custom_integrations: None,  # noqa: ARG001
 ) -> None:
   """Test the reconfiguration flow."""
   entry = MockConfigEntry(
@@ -286,7 +271,6 @@ async def test_reconfigure_flow(
 async def test_reconfigure_flow_invalid_param(
   hass: HomeAssistant,
   url: Callable[[str], str],
-  enable_custom_integrations: None,  # noqa: ARG001
 ) -> None:
   """Test the reconfiguration flow for invalid URL parameter."""
   entry = MockConfigEntry(

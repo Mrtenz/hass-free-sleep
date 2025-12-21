@@ -4229,6 +4229,21 @@ files = [
 cryptography = "*"
 
 [[package]]
+name = "sensor-state-data"
+version = "2.20.0"
+description = "Models for storing and converting Sensor Data state"
+optional = false
+python-versions = "<4.0,>=3.9"
+groups = ["dev"]
+files = [
+    {file = "sensor_state_data-2.20.0-py3-none-any.whl", hash = "sha256:34aaff3c956fb832dd0c6bfd4c20f2152d0fc1f50b782951d958bf08f099c12c"},
+    {file = "sensor_state_data-2.20.0.tar.gz", hash = "sha256:bad940f9a36bc18b03f59a8245af87c19436240e9ca321afa87655c61a995ac0"},
+]
+
+[package.extras]
+docs = ["Sphinx (>=5,<8)", "myst-parser (>=0.18,<3.1)", "sphinx-rtd-theme (>=1,<4)"]
+
+[[package]]
 name = "sentence-stream"
 version = "1.2.1"
 description = "A small sentence splitter for text streams"

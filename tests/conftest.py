@@ -5,14 +5,36 @@ This module provides pytest fixtures to create a FreeSleepAPI client and
 mock responses for device status, settings, etc.
 """
 
+import logging
 from collections.abc import AsyncGenerator, Callable, Generator
 from typing import Any
 
 import pytest
 from aiohttp import ClientSession
 from aioresponses import aioresponses
+from homeassistant.core import HomeAssistant
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.free_sleep import FreeSleepAPI
+from custom_components.free_sleep import DOMAIN, FreeSleepAPI
+from custom_components.free_sleep.constants import SERVER_INFO_URL
+
+
+@pytest.fixture(autouse=True)
+def auto_enable_custom_integrations(
+  enable_custom_integrations: None,  # noqa: ARG001
+) -> None:
+  """Enable custom integrations for all tests."""
+  return
+
+
+@pytest.fixture(autouse=True)
+def auto_configure_logging(caplog: pytest.LogCaptureFixture) -> None:
+  """
+  Configure logging for the tests to only show errors by default.
+
+  Behaviour can be overridden in individual tests using the `caplog` fixture.
+  """
+  caplog.set_level(logging.ERROR)
 
 
 @pytest.fixture
@@ -192,7 +214,13 @@ def mock_services() -> dict[str, Any]:
 @pytest.fixture
 def mock_vitals() -> dict[str, Any]:
   """Fixture to provide a mock vitals response."""
-  return {'heartRate': 60, 'respirationRate': 15}
+  return {
+    'heartRate': 60,
+    'respirationRate': 15,
+    'avgHeartRate': 50,
+    'avgHRV': 40,
+    'avgBreathingRate': 14,
+  }
 
 
 @pytest.fixture
@@ -200,7 +228,7 @@ def mock_presence() -> dict[str, Any]:
   """Fixture to provide a mock presence response."""
   return {
     'left': {
-      'present': True,
+      'present': False,
       'lastUpdatedAt': '2025-12-18T13:59:59-06:00',
     },
     'right': {
@@ -238,3 +266,61 @@ def mock_coordinator_data(
       'right': mock_presence['right'],
     },
   }
+
+
+@pytest.fixture
+def mock_config_entry(
+  url: Callable[[str], str],
+) -> MockConfigEntry:
+  """Fixture to provide a mock config entry."""
+  return MockConfigEntry(
+    domain=DOMAIN,
+    data={
+      'host': url(),
+    },
+    entry_id='test',
+    version=0,
+    minor_version=1,
+  )
+
+
+@pytest.fixture
+async def integration(  # noqa: PLR0913
+  hass: HomeAssistant,
+  http: aioresponses,
+  url: Callable[[str], str],
+  mock_device_status: dict[str, Any],
+  mock_settings: dict[str, Any],
+  mock_services: dict[str, Any],
+  mock_vitals: dict[str, Any],
+  mock_presence: dict[str, Any],
+  mock_latest_version: dict[str, Any],
+  mock_config_entry: MockConfigEntry,
+) -> MockConfigEntry:
+  """
+  Fixture to set up the FreeSleep integration.
+
+  It mocks the necessary HTTP responses and sets up the config entry in Home
+  Assistant.
+  """
+  http.get(url('/api/deviceStatus'), payload=mock_device_status, repeat=True)
+  http.get(url('/api/settings'), payload=mock_settings, repeat=True)
+  http.get(url('/api/services'), payload=mock_services, repeat=True)
+  http.get(
+    url('/api/metrics/vitals/summary?side=left'),
+    payload=mock_vitals,
+    repeat=True,
+  )
+  http.get(
+    url('/api/metrics/vitals/summary?side=right'),
+    payload=mock_vitals,
+    repeat=True,
+  )
+  http.get(url('/api/metrics/presence'), payload=mock_presence, repeat=True)
+  http.get(SERVER_INFO_URL, payload=mock_latest_version, repeat=True)
+
+  mock_config_entry.add_to_hass(hass)
+
+  await hass.config_entries.async_setup(mock_config_entry.entry_id)
+  await hass.async_block_till_done()
+  return mock_config_entry

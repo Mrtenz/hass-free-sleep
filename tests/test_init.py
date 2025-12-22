@@ -39,7 +39,6 @@ async def test_async_setup_entry(
   hass: HomeAssistant,
   url: Callable[[str], str],
   mock_coordinator_data: dict[str, Any],
-  enable_custom_integrations: None,  # noqa: ARG001
 ) -> None:
   """Test the `async_setup_entry` function for setting up a config entry."""
   entry = MockConfigEntry(

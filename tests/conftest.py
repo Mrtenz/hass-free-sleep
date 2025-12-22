@@ -14,9 +14,11 @@ from aiohttp import ClientSession
 from aioresponses import aioresponses
 from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
+from yarl import URL
 
 from custom_components.free_sleep import DOMAIN, FreeSleepAPI
 from custom_components.free_sleep.constants import SERVER_INFO_URL
+from tests.helpers import AssertPost, Json, Url
 
 
 @pytest.fixture(autouse=True)
@@ -45,7 +47,24 @@ def http() -> Generator[aioresponses, Any]:
 
 
 @pytest.fixture
-def url() -> Callable[[str], str]:
+def assert_post(http: aioresponses) -> AssertPost:
+  """
+  Assert that a POST request was made to the given URL and with expected JSON
+  data.
+  """
+
+  def _assert(url: str, json: Json = None, requests: int = 1) -> None:
+    calls = http.requests.get(('POST', URL(url)), [])
+    assert len(calls) == requests
+
+    for _args, kwargs in calls:
+      assert kwargs.get('json') == json
+
+  return _assert
+
+
+@pytest.fixture
+def url() -> Url:
   """Fixture to generate full URLs for the API."""
 
   def _url(path: str | None = '') -> str:

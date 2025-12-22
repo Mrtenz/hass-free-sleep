@@ -1,0 +1,61 @@
+# serializer version: 1
+# name: test_sensor_platform
+  list([
+    dict({
+      'device_class': None,
+      'entity_id': 'sensor.pod_4_left_heart_rate',
+      'original_name': 'Heart Rate',
+      'translation_key': 'heart_rate',
+      'unique_id': 'test_left_heart_rate',
+    }),
+    dict({
+      'device_class': None,
+      'entity_id': 'sensor.pod_4_left_hrv',
+      'original_name': 'HRV',
+      'translation_key': 'hrv',
+      'unique_id': 'test_left_hrv',
+    }),
+    dict({
+      'device_class': None,
+      'entity_id': 'sensor.pod_4_left_respiration_rate',
+      'original_name': 'Respiration Rate',
+      'translation_key': 'respiration_rate',
+      'unique_id': 'test_left_respiration_rate',
+    }),
+    dict({
+      'device_class': None,
+      'entity_id': 'sensor.pod_4_right_heart_rate',
+      'original_name': 'Heart Rate',
+      'translation_key': 'heart_rate',
+      'unique_id': 'test_right_heart_rate',
+    }),
+    dict({
+      'device_class': None,
+      'entity_id': 'sensor.pod_4_right_hrv',
+      'original_name': 'HRV',
+      'translation_key': 'hrv',
+      'unique_id': 'test_right_hrv',
+    }),
+    dict({
+      'device_class': None,
+      'entity_id': 'sensor.pod_4_right_respiration_rate',
+      'original_name': 'Respiration Rate',
+      'translation_key': 'respiration_rate',
+      'unique_id': 'test_right_respiration_rate',
+    }),
+    dict({
+      'device_class': None,
+      'entity_id': 'sensor.pod_4_version',
+      'original_name': 'Version',
+      'translation_key': 'version',
+      'unique_id': 'test_version',
+    }),
+    dict({
+      'device_class': None,
+      'entity_id': 'sensor.pod_4_wifi_strength',
+      'original_name': 'WiFi Strength',
+      'translation_key': 'wifi_strength',
+      'unique_id': 'test_wifi_strength',
+    }),
+  ])
+# ---

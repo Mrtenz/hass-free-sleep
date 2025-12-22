@@ -1,0 +1,40 @@
+# serializer version: 1
+# name: test_switch_platform
+  list([
+    dict({
+      'device_class': None,
+      'entity_id': 'switch.pod_4_biometrics',
+      'original_name': 'Biometrics',
+      'translation_key': 'biometrics',
+      'unique_id': 'test_biometrics',
+    }),
+    dict({
+      'device_class': None,
+      'entity_id': 'switch.pod_4_left_away_mode',
+      'original_name': 'Away Mode',
+      'translation_key': 'away_mode',
+      'unique_id': 'test_left_away_mode',
+    }),
+    dict({
+      'device_class': None,
+      'entity_id': 'switch.pod_4_prime_daily',
+      'original_name': 'Prime Daily',
+      'translation_key': 'prime_daily',
+      'unique_id': 'test_prime_daily',
+    }),
+    dict({
+      'device_class': None,
+      'entity_id': 'switch.pod_4_reboot_daily',
+      'original_name': 'Reboot Daily',
+      'translation_key': 'reboot_daily',
+      'unique_id': 'test_reboot_daily',
+    }),
+    dict({
+      'device_class': None,
+      'entity_id': 'switch.pod_4_right_away_mode',
+      'original_name': 'Away Mode',
+      'translation_key': 'away_mode',
+      'unique_id': 'test_right_away_mode',
+    }),
+  ])
+# ---

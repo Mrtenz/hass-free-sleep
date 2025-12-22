@@ -1,0 +1,19 @@
+# serializer version: 1
+# name: test_climate_platform
+  list([
+    dict({
+      'device_class': None,
+      'entity_id': 'climate.pod_4_left_temperature',
+      'original_name': 'Temperature',
+      'translation_key': 'temperature',
+      'unique_id': 'test_left_temperature',
+    }),
+    dict({
+      'device_class': None,
+      'entity_id': 'climate.pod_4_right_temperature',
+      'original_name': 'Temperature',
+      'translation_key': 'temperature',
+      'unique_id': 'test_right_temperature',
+    }),
+  ])
+# ---

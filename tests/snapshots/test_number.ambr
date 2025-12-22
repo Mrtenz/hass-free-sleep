@@ -1,0 +1,12 @@
+# serializer version: 1
+# name: test_number_platform
+  list([
+    dict({
+      'device_class': None,
+      'entity_id': 'number.pod_4_led_brightness',
+      'original_name': 'LED Brightness',
+      'translation_key': 'led_brightness',
+      'unique_id': 'test_led_brightness',
+    }),
+  ])
+# ---

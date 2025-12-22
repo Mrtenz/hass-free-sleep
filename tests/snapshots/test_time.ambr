@@ -1,0 +1,12 @@
+# serializer version: 1
+# name: test_time_platform
+  list([
+    dict({
+      'device_class': None,
+      'entity_id': 'time.pod_4_prime_daily_time',
+      'original_name': 'Prime Daily Time',
+      'translation_key': 'prime_daily_time',
+      'unique_id': 'test_prime_daily_time',
+    }),
+  ])
+# ---

@@ -27,7 +27,8 @@ dev = [
   "aioresponses (>=0.7.8,<0.8.0)",
   "syrupy (>=5.0.0,<6.0.0)",
   "pytest-cov (>=7.0.0,<8.0.0)",
-  "sensor-state-data (>=2.20.0,<3.0.0)"
+  "sensor-state-data (>=2.20.0,<3.0.0)",
+  "aioesphomeapi (>=43.5.0,<44.0.0)"
 ]
 
 [build-system]

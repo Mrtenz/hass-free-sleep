@@ -21,9 +21,9 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import (
   CoordinatorEntity,
-  DataUpdateCoordinator,
 )
 
+from . import FreeSleepCoordinator
 from .constants import (
   DOMAIN,
   EIGHT_SLEEP_MAX_TEMPERATURE_F,
@@ -36,6 +36,8 @@ from .pod import Pod, Side
 @dataclass(frozen=True)
 class FreeSleepClimateDescription(ClimateEntityDescription):
   """A class that describes a Free Sleep Pod climate entity."""
+
+  name: str
 
   get_current_temperature: Callable[[dict[str, Any]], float] | None = None
   get_target_temperature: Callable[[dict[str, Any]], float] | None = None
@@ -77,7 +79,7 @@ async def async_setup_entry(
 
 
 class FreeSleepSideClimate(
-  CoordinatorEntity,
+  CoordinatorEntity[FreeSleepCoordinator],
   ClimateEntity,
 ):
   """A class that represents a Free Sleep Pod side climate entity."""
@@ -98,7 +100,7 @@ class FreeSleepSideClimate(
 
   def __init__(
     self,
-    coordinator: DataUpdateCoordinator,
+    coordinator: FreeSleepCoordinator,
     pod: Pod,
     side: Side,
     description: FreeSleepClimateDescription,

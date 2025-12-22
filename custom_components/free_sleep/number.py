@@ -23,9 +23,9 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.update_coordinator import (
   CoordinatorEntity,
-  DataUpdateCoordinator,
 )
 
+from . import FreeSleepCoordinator
 from .constants import DOMAIN
 from .pod import Pod
 
@@ -33,6 +33,8 @@ from .pod import Pod
 @dataclass(frozen=True)
 class FreeSleepNumberDescription(NumberEntityDescription):
   """A class that describes Free Sleep Pod number entities."""
+
+  name: str
 
   get_value: Callable[[dict[str, Any]], StateType] | None = None
   set_value: Callable[[Pod, StateType], Awaitable[None]] | None = None
@@ -75,7 +77,7 @@ async def async_setup_entry(
   async_add_entities(numbers, update_before_add=True)
 
 
-class FreeSleepNumber(CoordinatorEntity, NumberEntity):
+class FreeSleepNumber(CoordinatorEntity[FreeSleepCoordinator], NumberEntity):
   """A class that represents a number for a Free Sleep Pod."""
 
   entity_description: FreeSleepNumberDescription
@@ -84,7 +86,7 @@ class FreeSleepNumber(CoordinatorEntity, NumberEntity):
 
   def __init__(
     self,
-    coordinator: DataUpdateCoordinator,
+    coordinator: FreeSleepCoordinator,
     pod: Pod,
     description: FreeSleepNumberDescription,
   ) -> None:

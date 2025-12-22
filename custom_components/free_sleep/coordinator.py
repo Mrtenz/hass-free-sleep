@@ -47,7 +47,7 @@ class FreeSleepCoordinator(DataUpdateCoordinator[PodState]):
     log: Logger,
     api: FreeSleepAPI,
     update_interval: int = 30,
-    config_entry: ConfigEntry = None,
+    config_entry: ConfigEntry | None = None,
   ) -> None:
     """
     Initialize the Free Sleep Coordinator.
@@ -109,15 +109,22 @@ class FreeSleepCoordinator(DataUpdateCoordinator[PodState]):
       )
       raise UpdateFailed from error
 
+    vitals_dict: dict[PodSide, Any] = {
+      'left': vitals_left,
+      'right': vitals_right,
+    }
+
+    presence_dict: dict[PodSide, Any] = {
+      'left': presence.get('left', {}),
+      'right': presence.get('right', {}),
+    }
+
     return PodState(
       services=services,
       settings=settings,
       status=status,
-      vitals={'left': vitals_left, 'right': vitals_right},
-      presence={
-        'left': presence.get('left', {}),
-        'right': presence.get('right', {}),
-      },
+      vitals=vitals_dict,
+      presence=presence_dict,
     )
 
 

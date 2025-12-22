@@ -54,7 +54,7 @@ def assert_post(http: aioresponses) -> AssertPost:
   """
 
   def _assert(url: str, json: Json = None, requests: int = 1) -> None:
-    calls = http.requests.get(('POST', URL(url)), [])
+    calls = http.requests.get(('POST', URL(url)), [])  # type: ignore[call-arg]
     assert len(calls) == requests
 
     for _args, kwargs in calls:
@@ -67,8 +67,8 @@ def assert_post(http: aioresponses) -> AssertPost:
 def url() -> Url:
   """Fixture to generate full URLs for the API."""
 
-  def _url(path: str | None = '') -> str:
-    return f'http://example.com{path}'
+  def _url(url: str | None = None) -> str:
+    return f'http://example.com{url or ""}'
 
   return _url
 

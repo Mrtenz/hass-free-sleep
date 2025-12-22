@@ -28,7 +28,8 @@ dev = [
   "syrupy (>=5.0.0,<6.0.0)",
   "pytest-cov (>=7.0.0,<8.0.0)",
   "sensor-state-data (>=2.20.0,<3.0.0)",
-  "aioesphomeapi (>=43.5.0,<44.0.0)"
+  "aioesphomeapi (>=43.5.0,<44.0.0)",
+  "ty (>=0.0.5,<0.0.6)"
 ]
 
 [build-system]

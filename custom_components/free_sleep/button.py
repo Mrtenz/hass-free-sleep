@@ -28,6 +28,8 @@ from .pod import Pod
 class FreeSleepButtonDescription(ButtonEntityDescription):
   """A class that describes Free Sleep Pod button entities."""
 
+  name: str
+
   handle: Callable[[Pod], Awaitable[None]] | None = None
   """
   A callable that handles the button press action.

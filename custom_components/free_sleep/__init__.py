@@ -1,5 +1,7 @@
 """Home Assistant integration for Free Sleep Pod devices."""
 
+from typing import cast
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, Platform
 from homeassistant.core import HomeAssistant
@@ -49,17 +51,20 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
   :param entry: The configuration entry.
   :return: True if setup was successful.
   """
-  api = FreeSleepAPI(entry.data.get(CONF_HOST), async_get_clientsession(hass))
+  host = cast('str', entry.data.get(CONF_HOST))
+  update_interval = cast('int', entry.data.get(CONF_UPDATE_INTERVAL, 30))
+
+  api = FreeSleepAPI(host, async_get_clientsession(hass))
   coordinator = FreeSleepCoordinator(
     hass,
     log,
     api,
-    update_interval=entry.data.get(CONF_UPDATE_INTERVAL, 30),
+    update_interval=update_interval,
     config_entry=entry,
   )
 
   await coordinator.async_config_entry_first_refresh()
-  pod = Pod(hass, coordinator, entry, entry.data.get(CONF_HOST))
+  pod = Pod(hass, coordinator, entry, host)
 
   hass.data.setdefault(DOMAIN, {})
   hass.data[DOMAIN][entry.entry_id] = (

@@ -32,7 +32,7 @@ class MockResponse:
   async def json(
     self,
     content_type: str | None = None,  # noqa: ARG002
-  ) -> dict[str, Any] | None:
+  ) -> Json:
     """
     Get the JSON data from the response.
 

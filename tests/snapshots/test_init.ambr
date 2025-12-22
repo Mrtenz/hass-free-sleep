@@ -39,7 +39,7 @@
       'manufacturer': 'Eight Sleep',
       'model': 'Pod 4',
       'name': 'Pod 4 Left',
-      'via_device': '51d5d2358bd5e797150c357543fc1d3b',
+      'via_device': 'Pod 4',
     }),
     dict({
       'identifiers': list([
@@ -51,7 +51,7 @@
       'manufacturer': 'Eight Sleep',
       'model': 'Pod 4',
       'name': 'Pod 4 Right',
-      'via_device': '51d5d2358bd5e797150c357543fc1d3b',
+      'via_device': 'Pod 4',
     }),
   ])
 # ---

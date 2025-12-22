@@ -87,7 +87,9 @@ async def test_device_registry_snapshot(
         'manufacturer': device.manufacturer,
         'model': device.model,
         'identifiers': sorted(device.identifiers),
-        'via_device': device.via_device_id,
+        'via_device': registry.devices.get(device.via_device_id).name
+        if device.via_device_id
+        else None,
       }
       for device in registry.devices.values()
       if integration.entry_id in device.config_entries

@@ -15,3 +15,43 @@
     }),
   })
 # ---
+# name: test_device_registry_snapshot
+  list([
+    dict({
+      'identifiers': list([
+        tuple(
+          'Eight Sleep',
+          'test',
+        ),
+      ]),
+      'manufacturer': 'Eight Sleep',
+      'model': 'Pod 4',
+      'name': 'Pod 4',
+      'via_device': None,
+    }),
+    dict({
+      'identifiers': list([
+        tuple(
+          'Eight Sleep',
+          'test_left',
+        ),
+      ]),
+      'manufacturer': 'Eight Sleep',
+      'model': 'Pod 4',
+      'name': 'Pod 4 Left',
+      'via_device': '51d5d2358bd5e797150c357543fc1d3b',
+    }),
+    dict({
+      'identifiers': list([
+        tuple(
+          'Eight Sleep',
+          'test_right',
+        ),
+      ]),
+      'manufacturer': 'Eight Sleep',
+      'model': 'Pod 4',
+      'name': 'Pod 4 Right',
+      'via_device': '51d5d2358bd5e797150c357543fc1d3b',
+    }),
+  ])
+# ---

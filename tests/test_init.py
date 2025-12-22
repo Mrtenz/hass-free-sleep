@@ -4,6 +4,7 @@ from typing import Any
 from unittest.mock import patch
 
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import device_registry
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from syrupy import SnapshotAssertion
@@ -67,3 +68,31 @@ async def test_async_setup_entry(
 
   assert hass.data[DOMAIN]
   assert hass.data[DOMAIN][entry.entry_id]
+
+
+async def test_device_registry_snapshot(
+  hass: HomeAssistant, integration: MockConfigEntry, snapshot: SnapshotAssertion
+) -> None:
+  """
+  Test that the device registry contains the expected devices for the
+  Free Sleep integration.
+  """
+  registry = device_registry.async_get(hass)
+
+  # Filter for devices belonging to your integration
+  devices = sorted(
+    [
+      {
+        'name': device.name,
+        'manufacturer': device.manufacturer,
+        'model': device.model,
+        'identifiers': sorted(device.identifiers),
+        'via_device': device.via_device_id,
+      }
+      for device in registry.devices.values()
+      if integration.entry_id in device.config_entries
+    ],
+    key=lambda entry: entry['name'] or '',
+  )
+
+  assert devices == snapshot

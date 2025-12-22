@@ -79,7 +79,6 @@ async def test_device_registry_snapshot(
   """
   registry = device_registry.async_get(hass)
 
-  # Filter for devices belonging to your integration
   devices = sorted(
     [
       {

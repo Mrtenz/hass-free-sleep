@@ -1,15 +1,15 @@
 """Tests for the API module."""
 
-from collections.abc import Callable
-from typing import Any
+from typing import Any, cast
 from unittest.mock import patch
 
 import pytest
-from aiohttp import ClientResponseError
+from aiohttp import ClientResponse, ClientResponseError
 from aioresponses import aioresponses
 
 from custom_components.free_sleep.api import FreeSleepAPI
 from custom_components.free_sleep.constants import PodSide
+from tests.helpers import Json, Url
 
 
 class MockResponse:
@@ -19,9 +19,7 @@ class MockResponse:
   This only contains the parts needed for testing the FreeSleepAPI class.
   """
 
-  def __init__(
-    self, json: dict[str, Any] | None = None, status: int = 200
-  ) -> None:
+  def __init__(self, json: Json = None, status: int = 200) -> None:
     """
     Initialize the mock response.
 
@@ -47,7 +45,9 @@ class MockResponse:
 async def test_parse_response_no_content(api: FreeSleepAPI) -> None:
   """Test parsing a 204 No Content response."""
   response = MockResponse(status=204)
-  result = await api.parse_response(response)
+  client_response = cast('ClientResponse', cast('object', response))
+
+  result = await api.parse_response(client_response)
 
   assert result == {}
 
@@ -56,13 +56,15 @@ async def test_parse_response_with_content(api: FreeSleepAPI) -> None:
   """Test parsing a response with JSON content."""
   json_data = {'key': 'value'}
   response = MockResponse(status=200, json=json_data)
-  result = await api.parse_response(response)
+  client_response = cast('ClientResponse', cast('object', response))
+
+  result = await api.parse_response(client_response)
 
   assert result == json_data
 
 
 async def test_get_request(
-  api: FreeSleepAPI, http: aioresponses, url: Callable[[str], str]
+  api: FreeSleepAPI, http: aioresponses, url: Url
 ) -> None:
   """Test sending a GET request."""
   http.get(url('/test'), payload={'message': 'success'})
@@ -78,7 +80,7 @@ async def test_get_request(
 
 
 async def test_get_request_with_params(
-  api: FreeSleepAPI, http: aioresponses, url: Callable[[str], str]
+  api: FreeSleepAPI, http: aioresponses, url: Url
 ) -> None:
   """Test sending a GET request with query parameters."""
   http.get(
@@ -99,7 +101,7 @@ async def test_get_request_with_params(
 
 
 async def test_get_request_no_content(
-  api: FreeSleepAPI, http: aioresponses, url: Callable[[str], str]
+  api: FreeSleepAPI, http: aioresponses, url: Url
 ) -> None:
   """Test sending a GET request that returns no content."""
   http.get(url('/test'), status=204)
@@ -115,7 +117,7 @@ async def test_get_request_no_content(
 
 
 async def test_get_request_raise_for_status(
-  api: FreeSleepAPI, http: aioresponses, url: Callable[[str], str]
+  api: FreeSleepAPI, http: aioresponses, url: Url
 ) -> None:
   """Test that a GET request raises for non-200 status codes."""
   http.get(url('/test'), status=404)
@@ -131,7 +133,7 @@ async def test_get_request_raise_for_status(
 
 
 async def test_post_request(
-  api: FreeSleepAPI, http: aioresponses, url: Callable[[str], str]
+  api: FreeSleepAPI, http: aioresponses, url: Url
 ) -> None:
   """Test sending a POST request."""
   json_data = {'data': 'value'}
@@ -148,7 +150,7 @@ async def test_post_request(
 
 
 async def test_post_request_no_content(
-  api: FreeSleepAPI, http: aioresponses, url: Callable[[str], str]
+  api: FreeSleepAPI, http: aioresponses, url: Url
 ) -> None:
   """Test sending a POST request that returns no content."""
   json_data = {'data': 'value'}
@@ -165,7 +167,7 @@ async def test_post_request_no_content(
 
 
 async def test_post_request_raise_for_status(
-  api: FreeSleepAPI, http: aioresponses, url: Callable[[str], str]
+  api: FreeSleepAPI, http: aioresponses, url: Url
 ) -> None:
   """Test that a POST request raises for non-200 status codes."""
   json_data = {'data': 'value'}
@@ -185,7 +187,7 @@ async def test_fetch_device_status(
   api: FreeSleepAPI,
   mock_device_status: dict[str, Any],
   http: aioresponses,
-  url: Callable[[str], str],
+  url: Url,
 ) -> None:
   """Test fetching device status."""
   http.get(url('/api/deviceStatus'), payload=mock_device_status)
@@ -204,7 +206,7 @@ async def test_fetch_settings(
   api: FreeSleepAPI,
   mock_settings: dict[str, Any],
   http: aioresponses,
-  url: Callable[[str], str],
+  url: Url,
 ) -> None:
   """Test fetching device settings."""
   http.get(url('/api/settings'), payload=mock_settings)
@@ -223,7 +225,7 @@ async def test_fetch_services(
   api: FreeSleepAPI,
   mock_services: dict[str, Any],
   http: aioresponses,
-  url: Callable[[str], str],
+  url: Url,
 ) -> None:
   """Test fetching device services."""
   http.get(url('/api/services'), payload=mock_services)
@@ -249,7 +251,7 @@ async def test_fetch_vitals(
   api: FreeSleepAPI,
   mock_vitals: dict[str, Any],
   http: aioresponses,
-  url: Callable[[str], str],
+  url: Url,
   side: PodSide,
 ) -> None:
   """Test fetching device vitals."""
@@ -269,7 +271,7 @@ async def test_fetch_presence(
   api: FreeSleepAPI,
   mock_presence: dict[str, Any],
   http: aioresponses,
-  url: Callable[[str], str],
+  url: Url,
 ) -> None:
   """Test fetching presence data."""
   http.get(url('/api/metrics/presence'), payload=mock_presence)
@@ -288,7 +290,7 @@ async def test_fetch_current_version(
   api: FreeSleepAPI,
   mock_device_status: dict[str, Any],
   http: aioresponses,
-  url: Callable[[str], str],
+  url: Url,
 ) -> None:
   """Test fetching current firmware version."""
   http.get(url('/api/deviceStatus'), payload=mock_device_status)
@@ -307,7 +309,7 @@ async def test_fetch_latest_version(
   api: FreeSleepAPI,
   mock_latest_version: dict[str, Any],
   http: aioresponses,
-  url: Callable[[str], str],
+  url: Url,
 ) -> None:
   """Test fetching latest firmware version."""
   http.get(url('/custom/github/server-info.json'), payload=mock_latest_version)
@@ -329,7 +331,7 @@ async def test_fetch_latest_version(
 async def test_update_device_status(
   api: FreeSleepAPI,
   http: aioresponses,
-  url: Callable[[str], str],
+  url: Url,
 ) -> None:
   """Test updating device status."""
   json_data = {
@@ -357,7 +359,7 @@ async def test_update_device_status(
 async def test_update_settings(
   api: FreeSleepAPI,
   http: aioresponses,
-  url: Callable[[str], str],
+  url: Url,
 ) -> None:
   """Test updating device settings."""
   json_data = {
@@ -386,7 +388,7 @@ async def test_update_settings(
 async def test_update_schedule(
   api: FreeSleepAPI,
   http: aioresponses,
-  url: Callable[[str], str],
+  url: Url,
 ) -> None:
   """Test updating sleep schedule."""
   json_data = {
@@ -411,7 +413,7 @@ async def test_update_schedule(
 async def test_update_services(
   api: FreeSleepAPI,
   http: aioresponses,
-  url: Callable[[str], str],
+  url: Url,
 ) -> None:
   """Test updating device services."""
   json_data = {
@@ -431,7 +433,7 @@ async def test_update_services(
 
 async def test_execute(
   http: aioresponses,
-  url: Callable[[str], str],
+  url: Url,
   api: FreeSleepAPI,
 ) -> None:
   """Test executing a command on the device."""
@@ -453,7 +455,7 @@ async def test_execute(
 
 async def test_run_jobs(
   http: aioresponses,
-  url: Callable[[str], str],
+  url: Url,
   api: FreeSleepAPI,
 ) -> None:
   """Test running jobs on the device."""

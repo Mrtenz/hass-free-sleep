@@ -3,13 +3,13 @@
 from typing import Any
 from unittest.mock import patch
 
-from habluetooth.manager import Callable
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from syrupy.data import Snapshot
 
 from custom_components.free_sleep import DOMAIN, async_setup, async_setup_entry
+from tests.helpers import Url
 
 
 async def test_async_setup_register_services(
@@ -37,7 +37,7 @@ async def test_async_setup_register_services(
 
 async def test_async_setup_entry(
   hass: HomeAssistant,
-  url: Callable[[str], str],
+  url: Url,
   mock_coordinator_data: dict[str, Any],
 ) -> None:
   """Test the `async_setup_entry` function for setting up a config entry."""

@@ -12,7 +12,6 @@ from typing import Any
 import pytest
 from aiohttp import ClientSession
 from aioresponses import aioresponses
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 

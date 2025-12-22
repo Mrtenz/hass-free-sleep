@@ -27,6 +27,7 @@ from .pod import Pod
 class FreeSleepTimeDescription(TimeEntityDescription):
   """A class that describes Free Sleep Pod time entities."""
 
+  name: str
   get_value: Callable[[dict[str, Any]], str | time] | None = None
   set_value: Callable[[Pod, str], Awaitable[None]] | None = None
 

@@ -23,9 +23,9 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.update_coordinator import (
   CoordinatorEntity,
-  DataUpdateCoordinator,
 )
 
+from . import FreeSleepCoordinator
 from .constants import DOMAIN
 from .pod import Pod, Side
 
@@ -33,6 +33,9 @@ from .pod import Pod, Side
 @dataclass(frozen=True)
 class FreeSleepSensorDescription(SensorEntityDescription):
   """A class that describes Free Sleep Pod sensor entities."""
+
+  name: str
+  state_class: SensorStateClass | None = None
 
   get_value: Callable[[dict[str, Any]], StateType] | None = None
 
@@ -116,7 +119,7 @@ async def async_setup_entry(
     async_add_entities(side_switches, update_before_add=True)
 
 
-class FreeSleepSensor(CoordinatorEntity, SensorEntity):
+class FreeSleepSensor(CoordinatorEntity[FreeSleepCoordinator], SensorEntity):
   """A class that represents a sensor for a Free Sleep Pod."""
 
   entity_description: FreeSleepSensorDescription
@@ -125,7 +128,7 @@ class FreeSleepSensor(CoordinatorEntity, SensorEntity):
 
   def __init__(
     self,
-    coordinator: DataUpdateCoordinator,
+    coordinator: FreeSleepCoordinator,
     pod: Pod,
     description: FreeSleepSensorDescription,
   ) -> None:
@@ -169,7 +172,9 @@ class FreeSleepSensor(CoordinatorEntity, SensorEntity):
     return None
 
 
-class FreeSleepSideSensor(CoordinatorEntity, SensorEntity):
+class FreeSleepSideSensor(
+  CoordinatorEntity[FreeSleepCoordinator], SensorEntity
+):
   """A class that represents a sensor for a Free Sleep Pod side."""
 
   entity_description: FreeSleepSensorDescription
@@ -178,7 +183,7 @@ class FreeSleepSideSensor(CoordinatorEntity, SensorEntity):
 
   def __init__(
     self,
-    coordinator: DataUpdateCoordinator,
+    coordinator: FreeSleepCoordinator,
     pod: Pod,
     side: Side,
     description: FreeSleepSensorDescription,

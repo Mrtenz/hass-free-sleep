@@ -18,10 +18,10 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import (
   CoordinatorEntity,
-  DataUpdateCoordinator,
 )
 from sensor_state_data import BinarySensorDeviceClass
 
+from . import FreeSleepCoordinator
 from .constants import DOMAIN
 from .pod import Pod, Side
 
@@ -30,6 +30,8 @@ from .pod import Pod, Side
 class FreeSleepBinarySensorDescription(BinarySensorEntityDescription):
   """A class that describes Free Sleep Pod binary sensor entities."""
 
+  name: str
+  device_class: BinarySensorDeviceClass
   icon_on: str | None = None
   icon_off: str | None = None
 
@@ -62,6 +64,8 @@ POD_BINARY_SENSORS: tuple[FreeSleepBinarySensorDescription, ...] = (
 class FreeSleepSideBinarySensorDescription(BinarySensorEntityDescription):
   """A class that describes Free Sleep Pod side binary sensor entities."""
 
+  name: str
+  device_class: BinarySensorDeviceClass
   icon_on: str | None = None
   icon_off: str | None = None
 
@@ -110,7 +114,9 @@ async def async_setup_entry(
     async_add_entities(side_binary_sensors, update_before_add=True)
 
 
-class FreeSleepBinarySensor(CoordinatorEntity, BinarySensorEntity):
+class FreeSleepBinarySensor(
+  CoordinatorEntity[FreeSleepCoordinator], BinarySensorEntity
+):
   """A class that represents a sensor for a Free Sleep Pod."""
 
   entity_description: FreeSleepBinarySensorDescription
@@ -119,7 +125,7 @@ class FreeSleepBinarySensor(CoordinatorEntity, BinarySensorEntity):
 
   def __init__(
     self,
-    coordinator: DataUpdateCoordinator,
+    coordinator: FreeSleepCoordinator,
     pod: Pod,
     description: FreeSleepBinarySensorDescription,
   ) -> None:
@@ -173,7 +179,9 @@ class FreeSleepBinarySensor(CoordinatorEntity, BinarySensorEntity):
     return super().icon
 
 
-class FreeSleepSideBinarySensor(CoordinatorEntity, BinarySensorEntity):
+class FreeSleepSideBinarySensor(
+  CoordinatorEntity[FreeSleepCoordinator], BinarySensorEntity
+):
   """A class that represents a binary sensor for a Free Sleep Pod side."""
 
   entity_description: FreeSleepSideBinarySensorDescription
@@ -182,7 +190,7 @@ class FreeSleepSideBinarySensor(CoordinatorEntity, BinarySensorEntity):
 
   def __init__(
     self,
-    coordinator: DataUpdateCoordinator,
+    coordinator: FreeSleepCoordinator,
     pod: Pod,
     side: Side,
     description: FreeSleepSideBinarySensorDescription,

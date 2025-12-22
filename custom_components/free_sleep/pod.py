@@ -266,7 +266,7 @@ class Side:
     days_of_week = kwargs.get('days_of_week')
     schedule = kwargs.get('schedule')
 
-    json_data = {self.type: dict.fromkeys(days_of_week, schedule)}
+    json_data = {self.type: dict.fromkeys(days_of_week, schedule)}  # type: ignore[arg-type]
 
     log.debug(
       f'Setting schedule for side "{self.type}" with data "{json_data}".'

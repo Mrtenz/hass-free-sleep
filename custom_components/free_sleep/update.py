@@ -41,7 +41,9 @@ async def async_setup_entry(
   )
 
 
-class FreeSleepUpdate(CoordinatorEntity, UpdateEntity):
+class FreeSleepUpdate(
+  CoordinatorEntity[FirmwareUpdateCoordinator], UpdateEntity
+):
   """Update entity for Free Sleep Pod firmware updates."""
 
   _attr_has_entity_name = True

@@ -39,3 +39,13 @@ repos:
     rev: v0.19.0
     hooks:
       - id: yamlfmt
+
+  - repo: local
+    hooks:
+      - id: ty
+        name: ty-check
+        entry: poetry run ty check
+        language: python
+        types:
+          - python
+        pass_filenames: true

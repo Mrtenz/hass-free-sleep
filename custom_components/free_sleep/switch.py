@@ -22,6 +22,7 @@ from homeassistant.helpers.update_coordinator import (
   DataUpdateCoordinator,
 )
 
+from . import FreeSleepCoordinator
 from .constants import DOMAIN
 from .pod import Pod, Side
 
@@ -44,6 +45,7 @@ class SetValueFunction(Protocol):
 class FreeSleepSwitchDescription(SwitchEntityDescription):
   """A class that describes Free Sleep Pod switch entities."""
 
+  name: str
   on_icon: str | None = None
   off_icon: str | None = None
 
@@ -115,7 +117,7 @@ POD_SIDE_SWITCHES: tuple[FreeSleepSideSwitchDescription, ...] = (
     on_icon='mdi:home-outline',
     off_icon='mdi:home',
     get_value=lambda data: data['settings']['awayMode'],
-    set_value=lambda _pod, side, value: side.set_away_mode(value),
+    set_value=lambda pod, side, value: side.set_away_mode(value),  # noqa: ARG005
   ),
 )
 
@@ -208,18 +210,20 @@ class FreeSleepSwitch(CoordinatorEntity, SwitchEntity):
       return self.entity_description.off_icon
     return super().icon
 
-  async def async_turn_on(self) -> None:
+  async def async_turn_on(self, **_kwargs: dict) -> None:
     """Handle the switch turn on action."""
     if self.entity_description.set_value:
       await self.entity_description.set_value(self.pod, value=True)
 
-  async def async_turn_off(self) -> None:
+  async def async_turn_off(self, **_kwargs: dict) -> None:
     """Handle the switch turn off action."""
     if self.entity_description.set_value:
       await self.entity_description.set_value(self.pod, value=False)
 
 
-class FreeSleepSideSwitch(CoordinatorEntity, SwitchEntity):
+class FreeSleepSideSwitch(
+  CoordinatorEntity[FreeSleepCoordinator], SwitchEntity
+):
   """A class that represents a switch for a Free Sleep Pod side."""
 
   entity_description: FreeSleepSwitchDescription
@@ -228,7 +232,7 @@ class FreeSleepSideSwitch(CoordinatorEntity, SwitchEntity):
 
   def __init__(
     self,
-    coordinator: DataUpdateCoordinator,
+    coordinator: FreeSleepCoordinator,
     pod: Pod,
     side: Side,
     description: FreeSleepSwitchDescription,
@@ -282,12 +286,12 @@ class FreeSleepSideSwitch(CoordinatorEntity, SwitchEntity):
       return self.entity_description.off_icon
     return super().icon
 
-  async def async_turn_on(self) -> None:
+  async def async_turn_on(self, **_kwargs: dict) -> None:
     """Handle the switch turn on action."""
     if self.entity_description.set_value:
       await self.entity_description.set_value(self.pod, self.side, value=True)
 
-  async def async_turn_off(self) -> None:
+  async def async_turn_off(self, **_kwargs: dict) -> None:
     """Handle the switch turn off action."""
     if self.entity_description.set_value:
       await self.entity_description.set_value(self.pod, self.side, value=False)

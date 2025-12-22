@@ -2,7 +2,7 @@
 
 from copy import deepcopy
 
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, State
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.free_sleep.constants import (
@@ -17,7 +17,7 @@ async def test_binary_sensor_priming(
   """Test `binary_sensor.pod_4_priming`."""
   binary_sensor = hass.states.get('binary_sensor.pod_4_priming')
 
-  assert binary_sensor is not None
+  assert isinstance(binary_sensor, State)
   assert binary_sensor.state == 'off'
   assert binary_sensor.attributes.get('friendly_name') == 'Pod 4 Priming'
   assert binary_sensor.attributes.get('icon') == 'mdi:water-pump-off'
@@ -30,6 +30,7 @@ async def test_binary_sensor_priming(
   await hass.async_block_till_done()
 
   binary_sensor = hass.states.get('binary_sensor.pod_4_priming')
+  assert isinstance(binary_sensor, State)
   assert binary_sensor.state == 'on'
   assert binary_sensor.attributes.get('icon') == 'mdi:water-pump'
 
@@ -41,7 +42,7 @@ async def test_binary_sensor_water_level(
   """Test `binary_sensor.pod_4_water_level`."""
   binary_sensor = hass.states.get('binary_sensor.pod_4_water_level')
 
-  assert binary_sensor is not None
+  assert isinstance(binary_sensor, State)
   assert binary_sensor.state == 'off'
   assert binary_sensor.attributes.get('friendly_name') == 'Pod 4 Water Level'
   assert binary_sensor.attributes.get('icon') == 'mdi:water-check'
@@ -54,6 +55,7 @@ async def test_binary_sensor_water_level(
   await hass.async_block_till_done()
 
   binary_sensor = hass.states.get('binary_sensor.pod_4_water_level')
+  assert isinstance(binary_sensor, State)
   assert binary_sensor.state == 'on'
   assert binary_sensor.attributes.get('icon') == 'mdi:water-remove'
 
@@ -69,12 +71,12 @@ async def test_binary_sensor_side_presence(
   left_sensor = hass.states.get('binary_sensor.pod_4_left_presence')
   right_sensor = hass.states.get('binary_sensor.pod_4_right_presence')
 
-  assert left_sensor is not None
+  assert isinstance(left_sensor, State)
   assert left_sensor.state == 'off'
   assert left_sensor.attributes.get('friendly_name') == 'Pod 4 Left Presence'
   assert left_sensor.attributes.get('icon') == 'mdi:bed-empty'
 
-  assert right_sensor is not None
+  assert isinstance(right_sensor, State)
   assert right_sensor.state == 'off'
   assert right_sensor.attributes.get('friendly_name') == 'Pod 4 Right Presence'
   assert right_sensor.attributes.get('icon') == 'mdi:bed-empty'
@@ -90,8 +92,10 @@ async def test_binary_sensor_side_presence(
   left_sensor = hass.states.get('binary_sensor.pod_4_left_presence')
   right_sensor = hass.states.get('binary_sensor.pod_4_right_presence')
 
+  assert isinstance(left_sensor, State)
   assert left_sensor.state == 'on'
   assert left_sensor.attributes.get('icon') == 'mdi:bed'
 
+  assert isinstance(right_sensor, State)
   assert right_sensor.state == 'on'
   assert right_sensor.attributes.get('icon') == 'mdi:bed'

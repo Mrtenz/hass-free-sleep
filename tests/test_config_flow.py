@@ -1,7 +1,7 @@
 """Tests for the config flow module."""
 
 import logging
-from collections.abc import Callable, Generator
+from collections.abc import Generator
 from unittest.mock import patch
 
 import pytest
@@ -21,6 +21,7 @@ from custom_components.free_sleep.constants import (
   DEVICE_STATUS_ENDPOINT,
   DOMAIN,
 )
+from tests.helpers import Url
 
 
 @pytest.fixture(autouse=True)
@@ -38,7 +39,7 @@ def skip_setup() -> Generator[None]:
 
 
 async def test_validate_connection(
-  http: aioresponses, url: Callable[[str], str], hass: HomeAssistant
+  http: aioresponses, url: Url, hass: HomeAssistant
 ) -> None:
   """Test the `validate_connection` function."""
   http.get(
@@ -54,7 +55,7 @@ async def test_validate_connection(
 
 async def test_validate_connection_failure(
   http: aioresponses,
-  url: Callable[[str], str],
+  url: Url,
   hass: HomeAssistant,
   caplog: pytest.LogCaptureFixture,
 ) -> None:
@@ -67,7 +68,7 @@ async def test_validate_connection_failure(
 
 
 async def test_validate_setup(
-  http: aioresponses, url: Callable[[str], str], hass: HomeAssistant
+  http: aioresponses, url: Url, hass: HomeAssistant
 ) -> None:
   """Test the `validate_setup` function."""
   http.get(
@@ -106,7 +107,7 @@ async def test_validate_setup_invalid_url(
 
 
 async def test_validate_setup_failure(
-  http: aioresponses, url: Callable[[str], str], hass: HomeAssistant
+  http: aioresponses, url: Url, hass: HomeAssistant
 ) -> None:
   """Test the `validate_setup` function for connection failure."""
   http.get(url(DEVICE_STATUS_ENDPOINT), status=500)
@@ -121,7 +122,7 @@ async def test_validate_setup_failure(
 
 async def test_config_flow(
   hass: HomeAssistant,
-  url: Callable[[str], str],
+  url: Url,
   http: aioresponses,
 ) -> None:
   """Test the config flow."""
@@ -152,7 +153,7 @@ async def test_config_flow(
 
 async def test_config_flow_custom_update_interval(
   hass: HomeAssistant,
-  url: Callable[[str], str],
+  url: Url,
   http: aioresponses,
 ) -> None:
   """Test the config flow."""
@@ -183,7 +184,7 @@ async def test_config_flow_custom_update_interval(
 
 async def test_config_flow_failure(
   hass: HomeAssistant,
-  url: Callable[[str], str],
+  url: Url,
   http: aioresponses,
 ) -> None:
   """Test the config flow for connection failure."""
@@ -229,7 +230,7 @@ async def test_config_flow_invalid_param(
 
 async def test_reconfigure_flow(
   hass: HomeAssistant,
-  url: Callable[[str], str],
+  url: Url,
   http: aioresponses,
 ) -> None:
   """Test the reconfiguration flow."""
@@ -270,7 +271,7 @@ async def test_reconfigure_flow(
 
 async def test_reconfigure_flow_invalid_param(
   hass: HomeAssistant,
-  url: Callable[[str], str],
+  url: Url,
 ) -> None:
   """Test the reconfiguration flow for invalid URL parameter."""
   entry = MockConfigEntry(

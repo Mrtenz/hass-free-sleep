@@ -6,7 +6,7 @@ mock responses for device status, settings, etc.
 """
 
 import logging
-from collections.abc import AsyncGenerator, Callable, Generator
+from collections.abc import AsyncGenerator, Generator
 from typing import Any
 
 import pytest
@@ -74,7 +74,7 @@ def url() -> Url:
 
 
 @pytest.fixture
-async def api(url: Callable[[str], str]) -> AsyncGenerator[FreeSleepAPI, Any]:
+async def api(url: Url) -> AsyncGenerator[FreeSleepAPI, Any]:
   """Fixture to create a FreeSleepAPI client."""
   async with ClientSession() as session:
     yield FreeSleepAPI(host=url(), session=session)
@@ -289,7 +289,7 @@ def mock_coordinator_data(
 
 @pytest.fixture
 def mock_config_entry(
-  url: Callable[[str], str],
+  url: Url,
 ) -> MockConfigEntry:
   """Fixture to provide a mock config entry."""
   return MockConfigEntry(
@@ -307,7 +307,7 @@ def mock_config_entry(
 async def integration(  # noqa: PLR0913
   hass: HomeAssistant,
   http: aioresponses,
-  url: Callable[[str], str],
+  url: Url,
   mock_device_status: dict[str, Any],
   mock_settings: dict[str, Any],
   mock_services: dict[str, Any],

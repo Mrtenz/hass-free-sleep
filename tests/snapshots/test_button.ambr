@@ -1,0 +1,19 @@
+# serializer version: 1
+# name: test_button_platform
+  list([
+    dict({
+      'device_class': None,
+      'entity_id': 'button.pod_4_prime',
+      'original_name': 'Prime',
+      'translation_key': 'prime',
+      'unique_id': 'test_prime',
+    }),
+    dict({
+      'device_class': None,
+      'entity_id': 'button.pod_4_reboot',
+      'original_name': 'Reboot',
+      'translation_key': 'reboot',
+      'unique_id': 'test_reboot',
+    }),
+  ])
+# ---

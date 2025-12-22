@@ -1,0 +1,12 @@
+# serializer version: 1
+# name: test_update_platform
+  list([
+    dict({
+      'device_class': None,
+      'entity_id': 'update.pod_4_firmware',
+      'original_name': 'Firmware',
+      'translation_key': 'firmware',
+      'unique_id': 'test_firmware',
+    }),
+  ])
+# ---

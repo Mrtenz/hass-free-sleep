@@ -1,0 +1,33 @@
+# serializer version: 1
+# name: test_binary_sensor_platform
+  list([
+    dict({
+      'device_class': None,
+      'entity_id': 'binary_sensor.pod_4_left_presence',
+      'original_name': 'Presence',
+      'translation_key': 'presence',
+      'unique_id': 'test_left_bed_presence',
+    }),
+    dict({
+      'device_class': None,
+      'entity_id': 'binary_sensor.pod_4_priming',
+      'original_name': 'Priming',
+      'translation_key': 'priming',
+      'unique_id': 'test_priming',
+    }),
+    dict({
+      'device_class': None,
+      'entity_id': 'binary_sensor.pod_4_right_presence',
+      'original_name': 'Presence',
+      'translation_key': 'presence',
+      'unique_id': 'test_right_bed_presence',
+    }),
+    dict({
+      'device_class': None,
+      'entity_id': 'binary_sensor.pod_4_water_level',
+      'original_name': 'Water Level',
+      'translation_key': 'water_level',
+      'unique_id': 'test_water_level',
+    }),
+  ])
+# ---

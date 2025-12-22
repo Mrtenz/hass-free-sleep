@@ -6,14 +6,14 @@ from unittest.mock import patch
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from pytest_homeassistant_custom_component.common import MockConfigEntry
-from syrupy.data import Snapshot
+from syrupy import SnapshotAssertion
 
 from custom_components.free_sleep import DOMAIN, async_setup, async_setup_entry
 from tests.helpers import Url
 
 
 async def test_async_setup_register_services(
-  hass: HomeAssistant, snapshot: Snapshot
+  hass: HomeAssistant, snapshot: SnapshotAssertion
 ) -> None:
   """Test the `async_setup` function, registering services to Home Assistant."""
   assert await async_setup(hass, {})

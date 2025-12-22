@@ -57,8 +57,8 @@ def assert_post(http: aioresponses) -> AssertPost:
     calls = http.requests.get(('POST', URL(url)), [])
     assert len(calls) == requests
 
-    (_args, kwargs) = calls[0]
-    assert kwargs.get('json') == json
+    for _args, kwargs in calls:
+      assert kwargs.get('json') == json
 
   return _assert
 

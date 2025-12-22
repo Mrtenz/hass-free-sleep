@@ -14,6 +14,10 @@ from aiohttp import ClientSession
 from aioresponses import aioresponses
 from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant_custom_component.syrupy import (
+  HomeAssistantSnapshotExtension,
+)
+from syrupy import SnapshotAssertion
 from yarl import URL
 
 from custom_components.free_sleep import DOMAIN, FreeSleepAPI
@@ -37,6 +41,12 @@ def auto_configure_logging(caplog: pytest.LogCaptureFixture) -> None:
   Behaviour can be overridden in individual tests using the `caplog` fixture.
   """
   caplog.set_level(logging.ERROR)
+
+
+@pytest.fixture
+def snapshot(snapshot: SnapshotAssertion) -> SnapshotAssertion:
+  """Return snapshot assertion fixture with the Home Assistant extension."""
+  return snapshot.use_extension(HomeAssistantSnapshotExtension)
 
 
 @pytest.fixture

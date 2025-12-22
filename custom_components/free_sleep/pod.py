@@ -140,6 +140,15 @@ class Pod:
     data['services']['biometrics']['enabled'] = enabled
     self.coordinator.async_set_updated_data(data)
 
+  async def prime(self) -> None:
+    """Prime the Free Sleep Pod device."""
+    json_data = {'isPriming': True}
+    await self.api.update_device_status(json_data)
+
+    data = self.coordinator.data
+    data['status']['isPriming'] = True
+    self.coordinator.async_set_updated_data(data)
+
   async def reboot(self) -> None:
     """Reboot the Free Sleep Pod device."""
     await self.api.run_jobs(['reboot'])

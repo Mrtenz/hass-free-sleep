@@ -91,7 +91,7 @@ jobs:
         with:
           category: integration
       - name: Check Hassfest
-        uses: home-assistant/actions/hassfest@87c064c607f3c5cc673a24258d0c98d23033bfc3
+        uses: home-assistant/actions/hassfest@5752577ea7cc5aefb064b0b21432f18fe4d6ba90
 
   all-jobs-complete:
     name: All jobs complete

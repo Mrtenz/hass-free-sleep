@@ -26,7 +26,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Get GitHub token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         id: github-token
         with:
           app-id: ${{ secrets.APP_ID }}

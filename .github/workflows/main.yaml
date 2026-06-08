@@ -54,13 +54,13 @@ jobs:
       - name: Test
         run: poetry poe test
       - name: Upload coverage
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         with:
           use_oidc: true
           report_type: coverage
       - name: Upload test results
         if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         with:
           use_oidc: true
           report_type: test_results

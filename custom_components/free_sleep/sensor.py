@@ -36,6 +36,7 @@ class FreeSleepSensorDescription(SensorEntityDescription):
 
   name: str
   state_class: SensorStateClass | None = None
+  requires_presence: bool = False
 
   get_value: Callable[[dict[str, Any]], StateType] | None = None
 
@@ -67,6 +68,7 @@ POD_SIDE_SENSORS: tuple[FreeSleepSensorDescription, ...] = (
     native_unit_of_measurement='bpm',
     state_class=SensorStateClass.MEASUREMENT,
     icon='mdi:heart-pulse',
+    requires_presence=True,
     get_value=lambda data: data['vitals']['avgHeartRate'],
   ),
   FreeSleepSensorDescription(
@@ -76,6 +78,7 @@ POD_SIDE_SENSORS: tuple[FreeSleepSensorDescription, ...] = (
     native_unit_of_measurement='breaths/min',
     state_class=SensorStateClass.MEASUREMENT,
     icon='mdi:lungs',
+    requires_presence=True,
     get_value=lambda data: data['vitals']['avgBreathingRate'],
   ),
   FreeSleepSensorDescription(
@@ -85,6 +88,7 @@ POD_SIDE_SENSORS: tuple[FreeSleepSensorDescription, ...] = (
     native_unit_of_measurement='ms',
     state_class=SensorStateClass.MEASUREMENT,
     icon='mdi:heart',
+    requires_presence=True,
     get_value=lambda data: data['vitals']['avgHRV'],
   ),
 )
@@ -226,6 +230,13 @@ class FreeSleepSideSensor(
     """
     if self.entity_description.get_value:
       data = self.side.get_side_data(self.coordinator.data)
+
+      if (
+        self.entity_description.requires_presence
+        and not self.coordinator.is_vitals_valid(self.side.type)
+      ):
+        return None
+
       return self.entity_description.get_value(data)
 
     return None

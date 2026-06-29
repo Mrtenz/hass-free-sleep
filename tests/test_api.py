@@ -1,5 +1,6 @@
 """Tests for the API module."""
 
+from datetime import UTC, datetime, timedelta
 from typing import Any, cast
 from unittest.mock import patch
 
@@ -255,14 +256,27 @@ async def test_fetch_vitals(
   side: PodSide,
 ) -> None:
   """Test fetching device vitals."""
-  http.get(url(f'/api/metrics/vitals/summary?side={side}'), payload=mock_vitals)
+  frozen_now = datetime(2025, 1, 1, 12, 0, 0, tzinfo=UTC)
+  start_time = frozen_now - timedelta(minutes=5)
+  start_time_str = start_time.strftime('%Y-%m-%dT%H:%M:%SZ')
 
-  result = await api.fetch_vitals(side)
+  http.get(
+    url(f'/api/metrics/vitals/summary?side={side}&startTime={start_time_str}'),
+    payload=mock_vitals,
+  )
+
+  with patch(
+    'custom_components.free_sleep.api.datetime',
+    wraps=datetime,
+  ) as mock_datetime:
+    mock_datetime.now.return_value = frozen_now
+    result = await api.fetch_vitals(side)
+
   assert result == mock_vitals
   http.assert_called_with(
     url=url('/api/metrics/vitals/summary'),
     method='GET',
-    params={'side': side},
+    params={'side': side, 'startTime': start_time_str},
     timeout=10,
   )
 

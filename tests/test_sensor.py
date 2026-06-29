@@ -64,7 +64,7 @@ async def test_vitals_sensors_available_during_grace_window(
   hass: HomeAssistant,
 ) -> None:
   """Vitals sensors still report values just after presence is lost."""
-  # The integration fixture starts with present=False, so _presence_false_since
+  # The integration fixture starts with present=False, so presence_false_since
   # is set to "now" — we are inside the 5-minute grace window.
   for entity_id, expected in VITALS_EXPECTED_VALUES:
     sensor = hass.states.get(entity_id)
@@ -74,7 +74,7 @@ async def test_vitals_sensors_available_during_grace_window(
     )
 
 
-async def test_vitals_sensors_unavailable_after_grace_window(
+async def test_vitals_sensors_unknown_after_grace_window(
   hass: HomeAssistant,
   integration: MockConfigEntry,
 ) -> None:

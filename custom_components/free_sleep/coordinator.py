@@ -155,8 +155,7 @@ class FreeSleepCoordinator(DataUpdateCoordinator[PodState]):
     if since is None:
       return False
 
-    elapsed = (datetime.now(UTC) - since).total_seconds() / 60
-    return elapsed < grace_minutes
+    return datetime.now(UTC) - since < timedelta(minutes=grace_minutes)
 
 
 class FirmwareUpdateCoordinator(DataUpdateCoordinator[FirmwareState]):

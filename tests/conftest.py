@@ -6,6 +6,7 @@ mock responses for device status, settings, etc.
 """
 
 import logging
+import re
 from collections.abc import AsyncGenerator, Generator
 from typing import Any
 
@@ -336,12 +337,12 @@ async def integration(  # noqa: PLR0913
   http.get(url('/api/settings'), payload=mock_settings, repeat=True)
   http.get(url('/api/services'), payload=mock_services, repeat=True)
   http.get(
-    url('/api/metrics/vitals/summary?side=left'),
+    re.compile(r'.*/api/metrics/vitals/summary\?.*side=left.*'),
     payload=mock_vitals,
     repeat=True,
   )
   http.get(
-    url('/api/metrics/vitals/summary?side=right'),
+    re.compile(r'.*/api/metrics/vitals/summary\?.*side=right.*'),
     payload=mock_vitals,
     repeat=True,
   )

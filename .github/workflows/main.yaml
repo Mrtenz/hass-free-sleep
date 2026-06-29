@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Download actionlint
         id: download-actionlint
         run: bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/e7d448ef7507c20fc4c88a95d0c448b848cd6127/scripts/download-actionlint.bash) 1.7.8
@@ -29,7 +29,7 @@ jobs:
       - check-workflows
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Set up environment
         uses: ./.github/actions/setup-environment
         with:
@@ -46,7 +46,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Set up environment
         uses: ./.github/actions/setup-environment
         with:
@@ -72,7 +72,7 @@ jobs:
       - prepare
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Set up environment
         uses: ./.github/actions/setup-environment
         with:
@@ -85,7 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Check HACS compatibility
         uses: hacs/action@22.5.0
         with:
@@ -134,7 +134,7 @@ jobs:
       is-release: ${{ steps.check-release.outputs.is-release }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 2
 
